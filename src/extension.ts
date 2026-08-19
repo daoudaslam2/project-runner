@@ -27,7 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const commandStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 98);
 	commandStatusBarItem.command = 'project-runner.runCommand';
-	commandStatusBarItem.text = '$(terminal) Run Command';
+	commandStatusBarItem.text = '$(play)$(terminal) Run Command';
 	commandStatusBarItem.tooltip = 'Run the configured terminal command';
 
 	updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem);

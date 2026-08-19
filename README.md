@@ -41,7 +41,7 @@ Project Runner adds two ways to run your project without opening the Command Pal
 | Location | Button |
 | --- | --- |
 | Bottom status bar | `Run Project`, `Debug Project`, `Run Command`, or any combination |
-| Editor title toolbar | Play icon, debug icon, terminal command icon, or any combination |
+| Editor title toolbar | Play icon, debug icon, play-with-command icon, or any combination |
 
 The editor title toolbar button appears near the top-right editor actions. VS Code does not allow extensions to place arbitrary custom buttons directly in the main app title bar, so this is the closest native top-area location.
 

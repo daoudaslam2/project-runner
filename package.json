@@ -33,7 +33,7 @@
       {
         "command": "project-runner.runCommand",
         "title": "Project Runner: Run Command",
-        "icon": "$(terminal)"
+        "icon": "./resources/run-command.svg"
       },
       {
         "command": "project-runner.configureCommand",
