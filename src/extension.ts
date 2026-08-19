@@ -7,9 +7,11 @@ type RunnerConfig = {
 	actionCommand: string;
 	cwd: string;
 	terminalName: string;
-	showStatusBarButton: boolean;
 	actionRun: boolean;
 	actionDebug: boolean;
+	statusBarShowRun: boolean;
+	statusBarShowDebug: boolean;
+	statusBarShowCommand: boolean;
 };
 
 export function activate(context: vscode.ExtensionContext) {
@@ -92,10 +94,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const configChange = vscode.workspace.onDidChangeConfiguration((event) => {
 		if (
-			event.affectsConfiguration('projectRunner.showStatusBarButton') ||
 			event.affectsConfiguration('projectRunner.action.run') ||
 			event.affectsConfiguration('projectRunner.action.debug') ||
-			event.affectsConfiguration('projectRunner.action.command')
+			event.affectsConfiguration('projectRunner.action.command') ||
+			event.affectsConfiguration('projectRunner.statusBar.showRun') ||
+			event.affectsConfiguration('projectRunner.statusBar.showDebug') ||
+			event.affectsConfiguration('projectRunner.statusBar.showCommand')
 		) {
 			updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem);
 		}
@@ -144,23 +148,32 @@ function getRunnerConfig(workspaceFolder: vscode.WorkspaceFolder): RunnerConfig 
 		actionCommand: config.get('action.command', ''),
 		cwd: config.get('cwd', ''),
 		terminalName: config.get('terminalName', 'Project Runner'),
-		showStatusBarButton: config.get('showStatusBarButton', true),
 		actionRun: config.get('action.run', true),
-		actionDebug: config.get('action.debug', true)
+		actionDebug: config.get('action.debug', true),
+		statusBarShowRun: config.get('statusBar.showRun', true),
+		statusBarShowDebug: config.get('statusBar.showDebug', false),
+		statusBarShowCommand: config.get('statusBar.showCommand', false)
 	};
 }
 
 function getGlobalRunnerConfig(): Pick<
 	RunnerConfig,
-	'showStatusBarButton' | 'actionRun' | 'actionDebug' | 'actionCommand'
+	| 'actionRun'
+	| 'actionDebug'
+	| 'actionCommand'
+	| 'statusBarShowRun'
+	| 'statusBarShowDebug'
+	| 'statusBarShowCommand'
 > {
 	const config = vscode.workspace.getConfiguration('projectRunner');
 
 	return {
-		showStatusBarButton: config.get('showStatusBarButton', true),
 		actionRun: config.get('action.run', true),
 		actionDebug: config.get('action.debug', true),
-		actionCommand: config.get('action.command', '')
+		actionCommand: config.get('action.command', ''),
+		statusBarShowRun: config.get('statusBar.showRun', true),
+		statusBarShowDebug: config.get('statusBar.showDebug', false),
+		statusBarShowCommand: config.get('statusBar.showCommand', false)
 	};
 }
 
@@ -215,19 +228,19 @@ function updateActionVisibility(
 	void vscode.commands.executeCommand('setContext', 'projectRunner.action.debug', config.actionDebug);
 	void vscode.commands.executeCommand('setContext', 'projectRunner.hasCommandAction', hasCommandAction);
 
-	if (config.showStatusBarButton && config.actionRun) {
+	if (config.statusBarShowRun && config.actionRun) {
 		runStatusBarItem.show();
 	} else {
 		runStatusBarItem.hide();
 	}
 
-	if (config.showStatusBarButton && config.actionDebug) {
+	if (config.statusBarShowDebug && config.actionDebug) {
 		debugStatusBarItem.show();
 	} else {
 		debugStatusBarItem.hide();
 	}
 
-	if (config.showStatusBarButton && hasCommandAction) {
+	if (config.statusBarShowCommand && hasCommandAction) {
 		commandStatusBarItem.show();
 	} else {
 		commandStatusBarItem.hide();

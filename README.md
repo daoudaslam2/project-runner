@@ -17,7 +17,7 @@ It gives you separate buttons for VS Code run, VS Code debug, and an optional cu
 - Run custom commands from the workspace root or a configured subfolder.
 - Reuse the same terminal for custom command runs.
 - Customize the terminal name.
-- Hide all bottom status bar buttons while keeping the top editor toolbar buttons.
+- Control each bottom status bar button separately.
 
 ## Why Project Runner?
 
@@ -53,11 +53,16 @@ By default, Project Runner shows the VS Code run and debug actions:
 {
   "projectRunner.action.run": true,
   "projectRunner.action.debug": true,
-  "projectRunner.action.command": ""
+  "projectRunner.action.command": "",
+  "projectRunner.statusBar.showRun": true,
+  "projectRunner.statusBar.showDebug": false,
+  "projectRunner.statusBar.showCommand": false
 }
 ```
 
-Because `projectRunner.action.command` is empty by default, the custom command button is hidden until you set a command.
+By default, only the run action appears in the bottom status bar. The debug and custom command actions still appear in the editor title toolbar when enabled.
+
+Because `projectRunner.action.command` is empty by default, the custom command button is hidden until you set a command. To also show it in the bottom status bar, set `projectRunner.statusBar.showCommand` to `true`.
 
 ## Extension Settings
 
@@ -65,10 +70,12 @@ Because `projectRunner.action.command` is empty by default, the custom command b
 | --- | --- | --- | --- |
 | `projectRunner.cwd` | string | empty | Optional working directory. Relative paths are resolved from the workspace folder. |
 | `projectRunner.terminalName` | string | `Project Runner` | Name of the VS Code terminal used by the extension. |
-| `projectRunner.showStatusBarButton` | boolean | `true` | Shows or hides Project Runner buttons in the bottom status bar. |
 | `projectRunner.action.run` | boolean | `true` | Shows the run action, which starts VS Code run-without-debugging. |
 | `projectRunner.action.debug` | boolean | `true` | Shows the debug action, which starts VS Code debugging. |
 | `projectRunner.action.command` | string | empty | Optional terminal command. When empty, the command button is hidden. |
+| `projectRunner.statusBar.showRun` | boolean | `true` | Shows the run action in the bottom status bar. |
+| `projectRunner.statusBar.showDebug` | boolean | `false` | Shows the debug action in the bottom status bar. |
+| `projectRunner.statusBar.showCommand` | boolean | `false` | Shows the custom command action in the bottom status bar when `projectRunner.action.command` is set. |
 
 ## Example Configurations
 
@@ -111,7 +118,9 @@ Add these to your workspace `.vscode/settings.json`, or use `Project Runner: Con
 ```json
 {
   "projectRunner.action.run": true,
-  "projectRunner.action.debug": true
+  "projectRunner.action.debug": true,
+  "projectRunner.statusBar.showRun": true,
+  "projectRunner.statusBar.showDebug": true
 }
 ```
 
@@ -135,7 +144,8 @@ Add these to your workspace `.vscode/settings.json`, or use `Project Runner: Con
 
 ```json
 {
-  "projectRunner.action.command": "npm run dev"
+  "projectRunner.action.command": "npm run dev",
+  "projectRunner.statusBar.showCommand": true
 }
 ```
 

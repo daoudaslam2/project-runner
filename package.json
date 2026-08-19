@@ -87,11 +87,6 @@
           "default": "Project Runner",
           "description": "Name of the terminal used by Project Runner."
         },
-        "projectRunner.showStatusBarButton": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show Project Runner action buttons in the status bar."
-        },
         "projectRunner.action.run": {
           "type": "boolean",
           "default": true,
@@ -106,6 +101,21 @@
           "type": "string",
           "default": "",
           "description": "Optional terminal command action. When empty, the command button is hidden. When set, Project Runner shows a separate command button that runs this text in the terminal."
+        },
+        "projectRunner.statusBar.showRun": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the Project Runner run action in the status bar."
+        },
+        "projectRunner.statusBar.showDebug": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show the Project Runner debug action in the status bar."
+        },
+        "projectRunner.statusBar.showCommand": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show the Project Runner custom command action in the status bar when projectRunner.action.command is set."
         }
       }
     }
