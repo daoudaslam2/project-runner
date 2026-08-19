@@ -39,13 +39,13 @@
       "editor/title": [
         {
           "command": "project-runner.runProject",
-          "when": "projectRunner.buttonAction != debug",
+          "when": "projectRunner.action.run",
           "group": "navigation@1"
         },
         {
           "command": "project-runner.debugProject",
-          "when": "projectRunner.buttonAction == debug",
-          "group": "navigation@1"
+          "when": "projectRunner.action.debug",
+          "group": "navigation@2"
         }
       ],
       "commandPalette": [
@@ -82,16 +82,17 @@
         "projectRunner.showStatusBarButton": {
           "type": "boolean",
           "default": true,
-          "description": "Show a status bar button for running the project."
+          "description": "Show Project Runner action buttons in the status bar."
         },
-        "projectRunner.buttonAction": {
-          "type": "string",
-          "enum": [
-            "run",
-            "debug"
-          ],
-          "default": "run",
-          "description": "Action used by the Project Runner play buttons. Use 'run' to execute projectRunner.command or 'debug' to start VS Code debugging like F5."
+        "projectRunner.action.run": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the Project Runner run action. This action executes projectRunner.command."
+        },
+        "projectRunner.action.debug": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show the Project Runner debug action. This action starts VS Code debugging like F5."
         }
       }
     }

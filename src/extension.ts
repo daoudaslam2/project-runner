@@ -4,24 +4,28 @@ import * as path from 'path';
 const terminalByWorkspace = new Map<string, vscode.Terminal>();
 
 type RunnerConfig = {
-	buttonAction: 'run' | 'debug';
 	command: string;
 	cwd: string;
 	terminalName: string;
 	showStatusBarButton: boolean;
+	actionRun: boolean;
+	actionDebug: boolean;
 };
 
 export function activate(context: vscode.ExtensionContext) {
-	const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
-	updateButtonMode(statusBarItem);
+	const runStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
+	runStatusBarItem.command = 'project-runner.runProject';
+	runStatusBarItem.text = '$(play) Run Project';
+	runStatusBarItem.tooltip = 'Run the current workspace project';
+
+	const debugStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 99);
+	debugStatusBarItem.command = 'project-runner.debugProject';
+	debugStatusBarItem.text = '$(debug-alt) Debug Project';
+	debugStatusBarItem.tooltip = 'Start VS Code debugging';
+
+	updateActionVisibility(runStatusBarItem, debugStatusBarItem);
 
 	const runProject = vscode.commands.registerCommand('project-runner.runProject', async () => {
-		const globalConfig = getGlobalRunnerConfig();
-		if (globalConfig.buttonAction === 'debug') {
-			await startDebugging();
-			return;
-		}
-
 		const workspaceFolder = await pickWorkspaceFolder();
 		if (!workspaceFolder) {
 			vscode.window.showErrorMessage('Open a project folder before running Project Runner.');
@@ -81,13 +85,22 @@ export function activate(context: vscode.ExtensionContext) {
 	const configChange = vscode.workspace.onDidChangeConfiguration((event) => {
 		if (
 			event.affectsConfiguration('projectRunner.showStatusBarButton') ||
-			event.affectsConfiguration('projectRunner.buttonAction')
+			event.affectsConfiguration('projectRunner.action.run') ||
+			event.affectsConfiguration('projectRunner.action.debug')
 		) {
-			updateButtonMode(statusBarItem);
+			updateActionVisibility(runStatusBarItem, debugStatusBarItem);
 		}
 	});
 
-	context.subscriptions.push(runProject, debugProject, configureCommand, terminalClose, configChange, statusBarItem);
+	context.subscriptions.push(
+		runProject,
+		debugProject,
+		configureCommand,
+		terminalClose,
+		configChange,
+		runStatusBarItem,
+		debugStatusBarItem
+	);
 }
 
 export function deactivate() {}
@@ -117,20 +130,22 @@ function getRunnerConfig(workspaceFolder: vscode.WorkspaceFolder): RunnerConfig 
 	const config = vscode.workspace.getConfiguration('projectRunner', workspaceFolder.uri);
 
 	return {
-		buttonAction: config.get<'run' | 'debug'>('buttonAction', 'run'),
 		command: config.get('command', 'npm run dev'),
 		cwd: config.get('cwd', ''),
 		terminalName: config.get('terminalName', 'Project Runner'),
-		showStatusBarButton: config.get('showStatusBarButton', true)
+		showStatusBarButton: config.get('showStatusBarButton', true),
+		actionRun: config.get('action.run', true),
+		actionDebug: config.get('action.debug', false)
 	};
 }
 
-function getGlobalRunnerConfig(): Pick<RunnerConfig, 'buttonAction' | 'showStatusBarButton'> {
+function getGlobalRunnerConfig(): Pick<RunnerConfig, 'showStatusBarButton' | 'actionRun' | 'actionDebug'> {
 	const config = vscode.workspace.getConfiguration('projectRunner');
 
 	return {
-		buttonAction: config.get<'run' | 'debug'>('buttonAction', 'run'),
-		showStatusBarButton: config.get('showStatusBarButton', true)
+		showStatusBarButton: config.get('showStatusBarButton', true),
+		actionRun: config.get('action.run', true),
+		actionDebug: config.get('action.debug', false)
 	};
 }
 
@@ -169,24 +184,24 @@ async function startDebugging(): Promise<void> {
 	await vscode.commands.executeCommand('workbench.action.debug.start');
 }
 
-function updateButtonMode(statusBarItem: vscode.StatusBarItem): void {
+function updateActionVisibility(
+	runStatusBarItem: vscode.StatusBarItem,
+	debugStatusBarItem: vscode.StatusBarItem
+): void {
 	const config = getGlobalRunnerConfig();
 
-	if (config.buttonAction === 'debug') {
-		statusBarItem.command = 'project-runner.debugProject';
-		statusBarItem.text = '$(debug-alt) Debug Project';
-		statusBarItem.tooltip = 'Start VS Code debugging';
+	void vscode.commands.executeCommand('setContext', 'projectRunner.action.run', config.actionRun);
+	void vscode.commands.executeCommand('setContext', 'projectRunner.action.debug', config.actionDebug);
+
+	if (config.showStatusBarButton && config.actionRun) {
+		runStatusBarItem.show();
 	} else {
-		statusBarItem.command = 'project-runner.runProject';
-		statusBarItem.text = '$(play) Run Project';
-		statusBarItem.tooltip = 'Run the current workspace project';
+		runStatusBarItem.hide();
 	}
 
-	void vscode.commands.executeCommand('setContext', 'projectRunner.buttonAction', config.buttonAction);
-
-	if (config.showStatusBarButton) {
-		statusBarItem.show();
+	if (config.showStatusBarButton && config.actionDebug) {
+		debugStatusBarItem.show();
 	} else {
-		statusBarItem.hide();
+		debugStatusBarItem.hide();
 	}
 }

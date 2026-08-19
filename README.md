@@ -10,7 +10,7 @@ It is intentionally project-based instead of file-based. No matter which file is
 - Use the Command Palette command `Project Runner: Run Project`.
 - Click the `Run Project` button in the bottom status bar.
 - Click the play button in the editor title toolbar.
-- Set the play buttons to run your terminal command or start VS Code debugging like `F5`.
+- Show run and debug actions independently with true/false settings.
 - Configure the run command from VS Code with `Project Runner: Configure Run Command`.
 - Save commands per workspace, so different projects can use different run commands.
 - Run from the workspace root or a configured subfolder.
@@ -37,8 +37,8 @@ Project Runner adds two ways to run your project without opening the Command Pal
 
 | Location | Button |
 | --- | --- |
-| Bottom status bar | `Run Project` in run mode, `Debug Project` in debug mode |
-| Editor title toolbar | Play icon in run mode, debug icon in debug mode |
+| Bottom status bar | `Run Project`, `Debug Project`, or both |
+| Editor title toolbar | Play icon, debug icon, or both |
 
 The editor title toolbar button appears near the top-right editor actions. VS Code does not allow extensions to place arbitrary custom buttons directly in the main app title bar, so this is the closest native top-area location.
 
@@ -49,8 +49,9 @@ The editor title toolbar button appears near the top-right editor actions. VS Co
 | `projectRunner.command` | string | `npm run dev` | Command used to run the current workspace project. |
 | `projectRunner.cwd` | string | empty | Optional working directory. Relative paths are resolved from the workspace folder. |
 | `projectRunner.terminalName` | string | `Project Runner` | Name of the VS Code terminal used by the extension. |
-| `projectRunner.showStatusBarButton` | boolean | `true` | Shows or hides the bottom status bar button. |
-| `projectRunner.buttonAction` | string | `run` | Use `run` to execute `projectRunner.command`, or `debug` to start VS Code debugging like `F5`. |
+| `projectRunner.showStatusBarButton` | boolean | `true` | Shows or hides Project Runner buttons in the bottom status bar. |
+| `projectRunner.action.run` | boolean | `true` | Shows the run action, which executes `projectRunner.command`. |
+| `projectRunner.action.debug` | boolean | `false` | Shows the debug action, which starts VS Code debugging like `F5`. |
 
 ## Example Configurations
 
@@ -84,7 +85,16 @@ Add these to your workspace `.vscode/settings.json`, or use `Project Runner: Con
 
 ```json
 {
-  "projectRunner.buttonAction": "debug"
+  "projectRunner.action.debug": true
+}
+```
+
+### Show Both Run and Debug Buttons
+
+```json
+{
+  "projectRunner.action.run": true,
+  "projectRunner.action.debug": true
 }
 ```
 
