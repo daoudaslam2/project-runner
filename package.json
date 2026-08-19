@@ -33,7 +33,7 @@
       {
         "command": "project-runner.runCommand",
         "title": "Project Runner: Run Command",
-        "icon": "./resources/run-command.svg"
+        "icon": "$(run-with-deps)"
       },
       {
         "command": "project-runner.configureCommand",
