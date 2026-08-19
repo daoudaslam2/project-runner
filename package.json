@@ -33,7 +33,7 @@
       {
         "command": "project-runner.runCommand",
         "title": "Project Runner: Run Command",
-        "icon": "$(run-with-deps)"
+        "icon": "$(run-coverage)"
       },
       {
         "command": "project-runner.configureCommand",
