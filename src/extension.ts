@@ -146,7 +146,7 @@ function getRunnerConfig(workspaceFolder: vscode.WorkspaceFolder): RunnerConfig 
 		terminalName: config.get('terminalName', 'Project Runner'),
 		showStatusBarButton: config.get('showStatusBarButton', true),
 		actionRun: config.get('action.run', true),
-		actionDebug: config.get('action.debug', false)
+		actionDebug: config.get('action.debug', true)
 	};
 }
 
@@ -159,7 +159,7 @@ function getGlobalRunnerConfig(): Pick<
 	return {
 		showStatusBarButton: config.get('showStatusBarButton', true),
 		actionRun: config.get('action.run', true),
-		actionDebug: config.get('action.debug', false),
+		actionDebug: config.get('action.debug', true),
 		actionCommand: config.get('action.command', '')
 	};
 }

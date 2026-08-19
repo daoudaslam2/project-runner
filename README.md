@@ -54,7 +54,7 @@ The editor title toolbar button appears near the top-right editor actions. VS Co
 | `projectRunner.terminalName` | string | `Project Runner` | Name of the VS Code terminal used by the extension. |
 | `projectRunner.showStatusBarButton` | boolean | `true` | Shows or hides Project Runner buttons in the bottom status bar. |
 | `projectRunner.action.run` | boolean | `true` | Shows the run action, which starts VS Code run-without-debugging. |
-| `projectRunner.action.debug` | boolean | `false` | Shows the debug action, which starts VS Code debugging like `F5`. |
+| `projectRunner.action.debug` | boolean | `true` | Shows the debug action, which starts VS Code debugging like `F5`. |
 | `projectRunner.action.command` | string | empty | Optional terminal command. When empty, the command button is hidden. |
 
 ## Example Configurations

@@ -99,7 +99,7 @@
         },
         "projectRunner.action.debug": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "description": "Show the Project Runner debug action. This action starts VS Code debugging like F5."
         },
         "projectRunner.action.command": {
