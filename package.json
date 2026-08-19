@@ -38,7 +38,7 @@
       },
       {
         "command": "project-runner.stopCommand",
-        "title": "Project Runner: Stop Command",
+        "title": "Project Runner: Stop Project",
         "icon": "$(debug-stop)"
       },
       {
@@ -134,7 +134,7 @@
         "projectRunner.statusBar.showStopCommand": {
           "type": "boolean",
           "default": true,
-          "description": "Show the Project Runner stop command action in the status bar while a custom command is running."
+          "description": "Show the Project Runner stop action in the status bar while a Project Runner action is running."
         }
       }
     }
