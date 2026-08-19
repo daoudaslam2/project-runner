@@ -5,8 +5,6 @@ const terminalByWorkspace = new Map<string, vscode.Terminal>();
 const nativeDebugSessions = new Set<vscode.DebugSession>();
 let runningCommandTerminal: vscode.Terminal | undefined;
 let nativeActionRunning = false;
-let waitingForNativeDebugSession = false;
-let nativeDebugSessionWaitTimer: ReturnType<typeof setTimeout> | undefined;
 
 type RunnerConfig = {
 	actionCommand: string;
@@ -96,12 +94,12 @@ export function activate(context: vscode.ExtensionContext) {
 			runningCommandTerminal = undefined;
 		}
 
+		const shouldStopNativeAction = nativeActionRunning || nativeDebugSessions.size > 0;
 		await Promise.all([...nativeDebugSessions].map((session) => vscode.debug.stopDebugging(session)));
 		nativeDebugSessions.clear();
-		if (nativeActionRunning) {
+		if (shouldStopNativeAction) {
 			await vscode.commands.executeCommand('workbench.action.debug.stop');
 			nativeActionRunning = false;
-			clearNativeDebugSessionWait();
 		}
 		updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
 	});
@@ -149,11 +147,7 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	const debugStart = vscode.debug.onDidStartDebugSession((session) => {
-		if (!waitingForNativeDebugSession) {
-			return;
-		}
-
-		clearNativeDebugSessionWait();
+		nativeActionRunning = true;
 		nativeDebugSessions.add(session);
 		updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
 	});
@@ -298,35 +292,16 @@ function createNativeDebugAction(
 ): () => Promise<void> {
 	return async () => {
 		nativeActionRunning = true;
-		waitingForNativeDebugSession = true;
 		updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
-
-		if (nativeDebugSessionWaitTimer) {
-			clearTimeout(nativeDebugSessionWaitTimer);
-		}
-
-		nativeDebugSessionWaitTimer = setTimeout(() => {
-			clearNativeDebugSessionWait();
-		}, 10000);
 
 		try {
 			await vscode.commands.executeCommand(command);
 		} catch (error) {
 			nativeActionRunning = false;
-			clearNativeDebugSessionWait();
 			updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
 			throw error;
 		}
 	};
-}
-
-function clearNativeDebugSessionWait(): void {
-	waitingForNativeDebugSession = false;
-
-	if (nativeDebugSessionWaitTimer) {
-		clearTimeout(nativeDebugSessionWaitTimer);
-		nativeDebugSessionWaitTimer = undefined;
-	}
 }
 
 function updateActionVisibility(

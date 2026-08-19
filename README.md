@@ -9,8 +9,8 @@ It gives you separate buttons for VS Code run, VS Code debug, and an optional cu
 - Show a `Run Project` button that starts VS Code run-without-debugging.
 - Show a `Debug Project` button that starts VS Code debugging.
 - Show a `Run Command` button only when a custom command is configured.
-- Show a `Stop Project` button while a Project Runner action is running.
-- Hide run, debug, and command buttons while a Project Runner action is running.
+- Show a `Stop Project` button while a custom command or VS Code debug/run session is active.
+- Hide run, debug, and command buttons while a custom command or VS Code debug/run session is active.
 - Use the same actions from the Command Palette.
 - Control run and debug buttons independently with boolean settings.
 - Keep the custom command empty by default, so no extra command button appears until you need one.
@@ -34,7 +34,7 @@ Project Runner keeps those actions separate, so you can show only the buttons th
 | `Project Runner: Run Project` | Starts VS Code run-without-debugging. |
 | `Project Runner: Debug Project` | Starts VS Code debugging. |
 | `Project Runner: Run Command` | Runs `projectRunner.action.command` in a VS Code terminal. |
-| `Project Runner: Stop Project` | Stops the Project Runner-started action. For custom commands, it sends Ctrl+C to the terminal. |
+| `Project Runner: Stop Project` | Stops the active custom command or VS Code debug/run session. For custom commands, it sends Ctrl+C to the terminal. |
 | `Project Runner: Configure Run Command` | Prompts for a command and saves it to the current workspace settings. |
 
 ## UI Buttons
@@ -174,7 +174,7 @@ Add these to your workspace `.vscode/settings.json`, or use `Project Runner: Con
 
 ## How It Works
 
-For VS Code run and debug actions, Project Runner delegates to VS Code's built-in run/debug commands.
+For VS Code run and debug actions, Project Runner delegates to VS Code's built-in run/debug commands. It also listens for VS Code debug/run sessions started outside Project Runner, such as from the menu, keyboard shortcuts, or the Run and Debug panel.
 
 For custom command actions:
 
@@ -189,7 +189,7 @@ If you have multiple workspace folders open, Project Runner uses the folder for 
 
 ## Known Issues
 
-- Project Runner only tracks VS Code run/debug sessions started from its own buttons.
+- Project Runner follows VS Code's global debug/run session state.
 - Only one custom command is supported per workspace.
 - The command is sent to a terminal; Project Runner does not currently manage process lifecycle beyond terminal reuse.
 
