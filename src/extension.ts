@@ -263,13 +263,13 @@ function updateActionVisibility(
 	void vscode.commands.executeCommand('setContext', 'projectRunner.hasCommandAction', hasCommandAction);
 	void vscode.commands.executeCommand('setContext', 'projectRunner.commandRunning', commandRunning);
 
-	if (config.statusBarShowRun && config.actionRun) {
+	if (config.statusBarShowRun && config.actionRun && !commandRunning) {
 		runStatusBarItem.show();
 	} else {
 		runStatusBarItem.hide();
 	}
 
-	if (config.statusBarShowDebug && config.actionDebug) {
+	if (config.statusBarShowDebug && config.actionDebug && !commandRunning) {
 		debugStatusBarItem.show();
 	} else {
 		debugStatusBarItem.hide();

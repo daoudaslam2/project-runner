@@ -10,6 +10,7 @@ It gives you separate buttons for VS Code run, VS Code debug, and an optional cu
 - Show a `Debug Project` button that starts VS Code debugging.
 - Show a `Run Command` button only when a custom command is configured.
 - Show a `Stop Command` button while a custom command is running.
+- Hide run, debug, and command buttons while a custom command is running.
 - Use the same actions from the Command Palette.
 - Control run and debug buttons independently with boolean settings.
 - Keep the custom command empty by default, so no extra command button appears until you need one.

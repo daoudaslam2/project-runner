@@ -51,12 +51,12 @@
       "editor/title": [
         {
           "command": "project-runner.runProject",
-          "when": "projectRunner.action.run",
+          "when": "projectRunner.action.run && !projectRunner.commandRunning",
           "group": "navigation@1"
         },
         {
           "command": "project-runner.debugProject",
-          "when": "projectRunner.action.debug",
+          "when": "projectRunner.action.debug && !projectRunner.commandRunning",
           "group": "navigation@2"
         },
         {
