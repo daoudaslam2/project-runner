@@ -1,30 +1,29 @@
 # Project Runner
 
-Project Runner is a small VS Code extension for running, debugging, and launching a custom workspace command from convenient buttons.
+Project Runner is a small VS Code extension for adding simple project action buttons to VS Code.
 
-It is intentionally project-based instead of file-based. No matter which file is currently open, Project Runner uses VS Code project actions or runs your custom command from the workspace folder or from the custom working directory you configure.
+It gives you separate buttons for VS Code run, VS Code debug, and an optional custom terminal command. The custom command is project-based instead of file-based, so it runs from the workspace folder or from the custom working directory you configure.
 
 ## Features
 
-- Start VS Code run-without-debugging from a Project Runner button.
-- Start VS Code debugging from a Project Runner button.
-- Run any custom project command from VS Code.
-- Use the Command Palette command `Project Runner: Run Project`.
-- Click the `Run Project` button in the bottom status bar.
-- Click the play button in the editor title toolbar.
-- Show run and debug actions independently with true/false settings.
-- Configure the run command from VS Code with `Project Runner: Configure Run Command`.
-- Save commands per workspace, so different projects can use different run commands.
-- Run from the workspace root or a configured subfolder.
-- Reuse the same terminal for the same workspace.
+- Show a `Run Project` button that starts VS Code run-without-debugging.
+- Show a `Debug Project` button that starts VS Code debugging like `F5`.
+- Show a `Run Command` button only when a custom command is configured.
+- Use the same actions from the Command Palette.
+- Control run and debug buttons independently with boolean settings.
+- Keep the custom command empty by default, so no extra command button appears until you need one.
+- Configure a custom command from VS Code with `Project Runner: Configure Run Command`.
+- Save command settings per workspace, so different projects can use different commands.
+- Run custom commands from the workspace root or a configured subfolder.
+- Reuse the same terminal for custom command runs.
 - Customize the terminal name.
-- Hide the bottom status bar button if you only want the top toolbar or Command Palette action.
+- Hide all bottom status bar buttons while keeping the top editor toolbar buttons.
 
 ## Why Project Runner?
 
-Many run buttons are tied to the active file. That works for scripts, but it is not ideal for real projects where the correct command might be `npm run dev`, `python -m uvicorn main:app --reload`, `docker compose up`, or something else entirely.
+Many run buttons are tied to the active file. That works for scripts, but it is not ideal for real projects where you may want one-click VS Code run/debug actions plus a separate project command like `npm run dev`, `python -m uvicorn main:app --reload`, `docker compose up`, or something else entirely.
 
-Project Runner lets the project decide what "run" means.
+Project Runner keeps those actions separate, so you can show only the buttons that make sense for each workspace.
 
 ## Commands
 
@@ -45,6 +44,20 @@ Project Runner adds two ways to run your project without opening the Command Pal
 | Editor title toolbar | Play icon, debug icon, terminal command icon, or any combination |
 
 The editor title toolbar button appears near the top-right editor actions. VS Code does not allow extensions to place arbitrary custom buttons directly in the main app title bar, so this is the closest native top-area location.
+
+## Default Behavior
+
+By default, Project Runner shows the VS Code run and debug actions:
+
+```json
+{
+  "projectRunner.action.run": true,
+  "projectRunner.action.debug": true,
+  "projectRunner.action.command": ""
+}
+```
+
+Because `projectRunner.action.command` is empty by default, the custom command button is hidden until you set a command.
 
 ## Extension Settings
 
@@ -102,6 +115,22 @@ Add these to your workspace `.vscode/settings.json`, or use `Project Runner: Con
 }
 ```
 
+### Hide Debug Button
+
+```json
+{
+  "projectRunner.action.debug": false
+}
+```
+
+### Hide Run Button
+
+```json
+{
+  "projectRunner.action.run": false
+}
+```
+
 ### Show a Custom Command Button
 
 ```json
@@ -132,24 +161,28 @@ Add these to your workspace `.vscode/settings.json`, or use `Project Runner: Con
 
 ## How It Works
 
+For VS Code run and debug actions, Project Runner delegates to VS Code's built-in run/debug commands.
+
+For custom command actions:
+
 1. Project Runner finds the current workspace folder.
 2. It reads the workspace settings.
-3. It resolves `projectRunner.cwd`.
-4. It opens or reuses a terminal.
-5. It sends `projectRunner.action.command` to that terminal.
+3. It checks whether `projectRunner.action.command` has text.
+4. It resolves `projectRunner.cwd`.
+5. It opens or reuses a terminal.
+6. It sends `projectRunner.action.command` to that terminal.
 
 If you have multiple workspace folders open, Project Runner uses the folder for the active editor when possible. If it cannot infer the folder, VS Code asks you to choose one.
 
 ## Known Issues
 
-- Stop and debug buttons are not available yet.
+- Stop button is not available yet.
 - Only one custom command is supported per workspace.
 - The command is sent to a terminal; Project Runner does not currently manage process lifecycle beyond terminal reuse.
 
 ## Roadmap
 
 - Stop button.
-- Debug button.
 - Multiple named run commands.
 - Project command detection for common frameworks.
 - Sidebar view for project actions.
@@ -160,8 +193,9 @@ If you have multiple workspace folders open, Project Runner uses the folder for 
 
 Initial Project Runner release with:
 
-- Configurable project run command.
-- Command Palette commands.
-- Bottom status bar button.
-- Editor title toolbar play button.
+- VS Code run and debug action buttons.
+- Optional custom terminal command button.
+- Command Palette actions.
+- Bottom status bar buttons.
+- Editor title toolbar buttons.
 - Workspace-aware command execution.
