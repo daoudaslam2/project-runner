@@ -9,6 +9,7 @@ It gives you separate buttons for VS Code run, VS Code debug, and an optional cu
 - Show a `Run Project` button that starts VS Code run-without-debugging.
 - Show a `Debug Project` button that starts VS Code debugging.
 - Show a `Run Command` button only when a custom command is configured.
+- Show a `Stop Command` button while a custom command is running.
 - Use the same actions from the Command Palette.
 - Control run and debug buttons independently with boolean settings.
 - Keep the custom command empty by default, so no extra command button appears until you need one.
@@ -32,6 +33,7 @@ Project Runner keeps those actions separate, so you can show only the buttons th
 | `Project Runner: Run Project` | Starts VS Code run-without-debugging. |
 | `Project Runner: Debug Project` | Starts VS Code debugging. |
 | `Project Runner: Run Command` | Runs `projectRunner.action.command` in a VS Code terminal. |
+| `Project Runner: Stop Command` | Sends Ctrl+C to the running custom command terminal. |
 | `Project Runner: Configure Run Command` | Prompts for a command and saves it to the current workspace settings. |
 
 ## UI Buttons
@@ -40,8 +42,8 @@ Project Runner adds two ways to run your project without opening the Command Pal
 
 | Location | Button |
 | --- | --- |
-| Bottom status bar | `Run Project`, `Debug Project`, `Run Command`, or any combination |
-| Editor title toolbar | Play icon, debug icon, play-with-command icon, or any combination |
+| Bottom status bar | `Run Project`, `Debug Project`, `Run Command`, `Stop Command`, or any combination |
+| Editor title toolbar | Play icon, debug icon, command icon, or stop icon |
 
 The editor title toolbar button appears near the top-right editor actions. VS Code does not allow extensions to place arbitrary custom buttons directly in the main app title bar, so this is the closest native top-area location.
 
@@ -56,7 +58,8 @@ By default, Project Runner shows the VS Code run and debug actions:
   "projectRunner.action.command": "",
   "projectRunner.statusBar.showRun": true,
   "projectRunner.statusBar.showDebug": false,
-  "projectRunner.statusBar.showCommand": false
+  "projectRunner.statusBar.showCommand": false,
+  "projectRunner.statusBar.showStopCommand": true
 }
 ```
 
@@ -76,6 +79,7 @@ Because `projectRunner.action.command` is empty by default, the custom command b
 | `projectRunner.statusBar.showRun` | boolean | `true` | Shows the run action in the bottom status bar. |
 | `projectRunner.statusBar.showDebug` | boolean | `false` | Shows the debug action in the bottom status bar. |
 | `projectRunner.statusBar.showCommand` | boolean | `false` | Shows the custom command action in the bottom status bar when `projectRunner.action.command` is set. |
+| `projectRunner.statusBar.showStopCommand` | boolean | `true` | Shows the stop command action in the bottom status bar while a custom command is running. |
 
 ## Example Configurations
 
@@ -149,6 +153,14 @@ Add these to your workspace `.vscode/settings.json`, or use `Project Runner: Con
 }
 ```
 
+### Hide Stop Command Button in Status Bar
+
+```json
+{
+  "projectRunner.statusBar.showStopCommand": false
+}
+```
+
 ### Project With a Subfolder
 
 ```json
@@ -176,13 +188,13 @@ If you have multiple workspace folders open, Project Runner uses the folder for 
 
 ## Known Issues
 
-- Stop button is not available yet.
+- Stop support is currently only for custom command runs.
 - Only one custom command is supported per workspace.
 - The command is sent to a terminal; Project Runner does not currently manage process lifecycle beyond terminal reuse.
 
 ## Roadmap
 
-- Stop button.
+- Stop support for VS Code run/debug sessions.
 - Multiple named run commands.
 - Project command detection for common frameworks.
 - Sidebar view for project actions.

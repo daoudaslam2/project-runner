@@ -15,6 +15,7 @@
     "onCommand:project-runner.runProject",
     "onCommand:project-runner.debugProject",
     "onCommand:project-runner.runCommand",
+    "onCommand:project-runner.stopCommand",
     "onCommand:project-runner.configureCommand"
   ],
   "main": "./out/extension.js",
@@ -36,6 +37,11 @@
         "icon": "$(run-coverage)"
       },
       {
+        "command": "project-runner.stopCommand",
+        "title": "Project Runner: Stop Command",
+        "icon": "$(debug-stop)"
+      },
+      {
         "command": "project-runner.configureCommand",
         "title": "Project Runner: Configure Run Command",
         "icon": "$(settings-gear)"
@@ -55,7 +61,12 @@
         },
         {
           "command": "project-runner.runCommand",
-          "when": "projectRunner.hasCommandAction",
+          "when": "projectRunner.hasCommandAction && !projectRunner.commandRunning",
+          "group": "navigation@3"
+        },
+        {
+          "command": "project-runner.stopCommand",
+          "when": "projectRunner.commandRunning",
           "group": "navigation@3"
         }
       ],
@@ -68,6 +79,9 @@
         },
         {
           "command": "project-runner.runCommand"
+        },
+        {
+          "command": "project-runner.stopCommand"
         },
         {
           "command": "project-runner.configureCommand"
@@ -116,6 +130,11 @@
           "type": "boolean",
           "default": false,
           "description": "Show the Project Runner custom command action in the status bar when projectRunner.action.command is set."
+        },
+        "projectRunner.statusBar.showStopCommand": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the Project Runner stop command action in the status bar while a custom command is running."
         }
       }
     }
