@@ -4,6 +4,7 @@ import * as path from 'path';
 const terminalByWorkspace = new Map<string, vscode.Terminal>();
 const nativeDebugSessions = new Set<vscode.DebugSession>();
 let runningCommandTerminal: vscode.Terminal | undefined;
+let nativeActionRunning = false;
 let waitingForNativeDebugSession = false;
 let nativeDebugSessionWaitTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -42,6 +43,22 @@ export function activate(context: vscode.ExtensionContext) {
 
 	updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
 
+	const startRunning = createNativeDebugAction(
+		'workbench.action.debug.run',
+		runStatusBarItem,
+		debugStatusBarItem,
+		commandStatusBarItem,
+		stopCommandStatusBarItem
+	);
+
+	const startDebugging = createNativeDebugAction(
+		'workbench.action.debug.start',
+		runStatusBarItem,
+		debugStatusBarItem,
+		commandStatusBarItem,
+		stopCommandStatusBarItem
+	);
+
 	const runProject = vscode.commands.registerCommand('project-runner.runProject', startRunning);
 
 	const debugProject = vscode.commands.registerCommand('project-runner.debugProject', startDebugging);
@@ -68,7 +85,7 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	const stopCommand = vscode.commands.registerCommand('project-runner.stopCommand', async () => {
-		if (!runningCommandTerminal && nativeDebugSessions.size === 0) {
+		if (!runningCommandTerminal && !nativeActionRunning && nativeDebugSessions.size === 0) {
 			vscode.window.showInformationMessage('No Project Runner action is running.');
 			return;
 		}
@@ -81,6 +98,11 @@ export function activate(context: vscode.ExtensionContext) {
 
 		await Promise.all([...nativeDebugSessions].map((session) => vscode.debug.stopDebugging(session)));
 		nativeDebugSessions.clear();
+		if (nativeActionRunning) {
+			await vscode.commands.executeCommand('workbench.action.debug.stop');
+			nativeActionRunning = false;
+			clearNativeDebugSessionWait();
+		}
 		updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
 	});
 
@@ -138,6 +160,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const debugTerminate = vscode.debug.onDidTerminateDebugSession((session) => {
 		if (nativeDebugSessions.delete(session)) {
+			nativeActionRunning = nativeDebugSessions.size > 0;
 			updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
 		}
 	});
@@ -266,25 +289,35 @@ function getOrCreateTerminal(
 	return terminal;
 }
 
-async function startDebugging(): Promise<void> {
-	await startNativeDebugAction('workbench.action.debug.start');
-}
+function createNativeDebugAction(
+	command: string,
+	runStatusBarItem: vscode.StatusBarItem,
+	debugStatusBarItem: vscode.StatusBarItem,
+	commandStatusBarItem: vscode.StatusBarItem,
+	stopCommandStatusBarItem: vscode.StatusBarItem
+): () => Promise<void> {
+	return async () => {
+		nativeActionRunning = true;
+		waitingForNativeDebugSession = true;
+		updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
 
-async function startRunning(): Promise<void> {
-	await startNativeDebugAction('workbench.action.debug.run');
-}
+		if (nativeDebugSessionWaitTimer) {
+			clearTimeout(nativeDebugSessionWaitTimer);
+		}
 
-async function startNativeDebugAction(command: string): Promise<void> {
-	waitingForNativeDebugSession = true;
-	nativeDebugSessionWaitTimer?.refresh?.();
-	nativeDebugSessionWaitTimer ??= setTimeout(clearNativeDebugSessionWait, 10000);
+		nativeDebugSessionWaitTimer = setTimeout(() => {
+			clearNativeDebugSessionWait();
+		}, 10000);
 
-	try {
-		await vscode.commands.executeCommand(command);
-	} catch (error) {
-		clearNativeDebugSessionWait();
-		throw error;
-	}
+		try {
+			await vscode.commands.executeCommand(command);
+		} catch (error) {
+			nativeActionRunning = false;
+			clearNativeDebugSessionWait();
+			updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
+			throw error;
+		}
+	};
 }
 
 function clearNativeDebugSessionWait(): void {
@@ -304,7 +337,7 @@ function updateActionVisibility(
 ): void {
 	const config = getGlobalRunnerConfig();
 	const hasCommandAction = Boolean(config.actionCommand.trim());
-	const commandRunning = Boolean(runningCommandTerminal || nativeDebugSessions.size);
+	const commandRunning = Boolean(runningCommandTerminal || nativeActionRunning || nativeDebugSessions.size);
 
 	void vscode.commands.executeCommand('setContext', 'projectRunner.action.run', config.actionRun);
 	void vscode.commands.executeCommand('setContext', 'projectRunner.action.debug', config.actionDebug);
