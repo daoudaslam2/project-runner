@@ -149,21 +149,11 @@ Add these to your workspace `.vscode/settings.json`, or use `Project Runner: Con
 }
 ```
 
-### Project With a Frontend Subfolder
+### Project With a Subfolder
 
 ```json
 {
-  "projectRunner.cwd": "frontend",
-  "projectRunner.action.command": "npm run dev",
-  "projectRunner.terminalName": "Frontend Dev Server"
-}
-```
-
-### Project With a Backend Subfolder
-
-```json
-{
-  "projectRunner.cwd": "backend",
+  "projectRunner.cwd": "folder-name-or-path",
   "projectRunner.action.command": "python -m uvicorn main:app --reload",
   "projectRunner.terminalName": "Backend Server"
 }
