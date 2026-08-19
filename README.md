@@ -189,12 +189,13 @@ If you have multiple workspace folders open, Project Runner uses the folder for 
 
 ## Known Issues
 
-- Project Runner follows VS Code's global debug/run session state.
 - Only one custom command is supported per workspace.
-- The command is sent to a terminal; Project Runner does not currently manage process lifecycle beyond terminal reuse.
+- Custom commands are sent to a terminal, so Project Runner stops them by sending Ctrl+C.
+- Project Runner follows VS Code's global debug/run session state, including sessions started outside the extension.
 
 ## Roadmap
 
+- Better custom command lifecycle detection.
 - Multiple named run commands.
 - Project command detection for common frameworks.
 - Sidebar view for project actions.
