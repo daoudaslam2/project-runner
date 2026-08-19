@@ -14,6 +14,7 @@
     "onStartupFinished",
     "onCommand:project-runner.runProject",
     "onCommand:project-runner.debugProject",
+    "onCommand:project-runner.runCommand",
     "onCommand:project-runner.configureCommand"
   ],
   "main": "./out/extension.js",
@@ -28,6 +29,11 @@
         "command": "project-runner.debugProject",
         "title": "Project Runner: Debug Project",
         "icon": "$(debug-alt)"
+      },
+      {
+        "command": "project-runner.runCommand",
+        "title": "Project Runner: Run Command",
+        "icon": "$(terminal)"
       },
       {
         "command": "project-runner.configureCommand",
@@ -46,6 +52,11 @@
           "command": "project-runner.debugProject",
           "when": "projectRunner.action.debug",
           "group": "navigation@2"
+        },
+        {
+          "command": "project-runner.runCommand",
+          "when": "projectRunner.hasCommandAction",
+          "group": "navigation@3"
         }
       ],
       "commandPalette": [
@@ -53,8 +64,10 @@
           "command": "project-runner.runProject"
         },
         {
-          "command": "project-runner.debugProject",
-          "when": "false"
+          "command": "project-runner.debugProject"
+        },
+        {
+          "command": "project-runner.runCommand"
         },
         {
           "command": "project-runner.configureCommand"
@@ -64,11 +77,6 @@
     "configuration": {
       "title": "Project Runner",
       "properties": {
-        "projectRunner.command": {
-          "type": "string",
-          "default": "npm run dev",
-          "description": "Command used to run the current workspace project."
-        },
         "projectRunner.cwd": {
           "type": "string",
           "default": "",
@@ -87,12 +95,17 @@
         "projectRunner.action.run": {
           "type": "boolean",
           "default": true,
-          "description": "Show the Project Runner run action. This action executes projectRunner.command."
+          "description": "Show the Project Runner run action. This action starts VS Code running without debugging."
         },
         "projectRunner.action.debug": {
           "type": "boolean",
           "default": false,
           "description": "Show the Project Runner debug action. This action starts VS Code debugging like F5."
+        },
+        "projectRunner.action.command": {
+          "type": "string",
+          "default": "",
+          "description": "Optional terminal command action. When empty, the command button is hidden. When set, Project Runner shows a separate command button that runs this text in the terminal."
         }
       }
     }

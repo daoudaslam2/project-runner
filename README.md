@@ -1,12 +1,14 @@
 # Project Runner
 
-Project Runner is a small VS Code extension for running the current workspace project with one configurable command.
+Project Runner is a small VS Code extension for running, debugging, and launching a custom workspace command from convenient buttons.
 
-It is intentionally project-based instead of file-based. No matter which file is currently open, Project Runner runs the command from the workspace folder or from the custom working directory you configure.
+It is intentionally project-based instead of file-based. No matter which file is currently open, Project Runner uses VS Code project actions or runs your custom command from the workspace folder or from the custom working directory you configure.
 
 ## Features
 
-- Run any project command from VS Code.
+- Start VS Code run-without-debugging from a Project Runner button.
+- Start VS Code debugging from a Project Runner button.
+- Run any custom project command from VS Code.
 - Use the Command Palette command `Project Runner: Run Project`.
 - Click the `Run Project` button in the bottom status bar.
 - Click the play button in the editor title toolbar.
@@ -28,7 +30,9 @@ Project Runner lets the project decide what "run" means.
 
 | Command | Description |
 | --- | --- |
-| `Project Runner: Run Project` | Runs the configured project command in a VS Code terminal. |
+| `Project Runner: Run Project` | Starts VS Code run-without-debugging. |
+| `Project Runner: Debug Project` | Starts VS Code debugging like `F5`. |
+| `Project Runner: Run Command` | Runs `projectRunner.action.command` in a VS Code terminal. |
 | `Project Runner: Configure Run Command` | Prompts for a command and saves it to the current workspace settings. |
 
 ## UI Buttons
@@ -37,8 +41,8 @@ Project Runner adds two ways to run your project without opening the Command Pal
 
 | Location | Button |
 | --- | --- |
-| Bottom status bar | `Run Project`, `Debug Project`, or both |
-| Editor title toolbar | Play icon, debug icon, or both |
+| Bottom status bar | `Run Project`, `Debug Project`, `Run Command`, or any combination |
+| Editor title toolbar | Play icon, debug icon, terminal command icon, or any combination |
 
 The editor title toolbar button appears near the top-right editor actions. VS Code does not allow extensions to place arbitrary custom buttons directly in the main app title bar, so this is the closest native top-area location.
 
@@ -46,12 +50,12 @@ The editor title toolbar button appears near the top-right editor actions. VS Co
 
 | Setting | Type | Default | Description |
 | --- | --- | --- | --- |
-| `projectRunner.command` | string | `npm run dev` | Command used to run the current workspace project. |
 | `projectRunner.cwd` | string | empty | Optional working directory. Relative paths are resolved from the workspace folder. |
 | `projectRunner.terminalName` | string | `Project Runner` | Name of the VS Code terminal used by the extension. |
 | `projectRunner.showStatusBarButton` | boolean | `true` | Shows or hides Project Runner buttons in the bottom status bar. |
-| `projectRunner.action.run` | boolean | `true` | Shows the run action, which executes `projectRunner.command`. |
+| `projectRunner.action.run` | boolean | `true` | Shows the run action, which starts VS Code run-without-debugging. |
 | `projectRunner.action.debug` | boolean | `false` | Shows the debug action, which starts VS Code debugging like `F5`. |
+| `projectRunner.action.command` | string | empty | Optional terminal command. When empty, the command button is hidden. |
 
 ## Example Configurations
 
@@ -61,7 +65,7 @@ Add these to your workspace `.vscode/settings.json`, or use `Project Runner: Con
 
 ```json
 {
-  "projectRunner.command": "npm run dev"
+  "projectRunner.action.command": "npm run dev"
 }
 ```
 
@@ -69,7 +73,7 @@ Add these to your workspace `.vscode/settings.json`, or use `Project Runner: Con
 
 ```json
 {
-  "projectRunner.command": "python -m uvicorn main:app --reload"
+  "projectRunner.action.command": "python -m uvicorn main:app --reload"
 }
 ```
 
@@ -77,7 +81,7 @@ Add these to your workspace `.vscode/settings.json`, or use `Project Runner: Con
 
 ```json
 {
-  "projectRunner.command": "docker compose up"
+  "projectRunner.action.command": "docker compose up"
 }
 ```
 
@@ -98,12 +102,20 @@ Add these to your workspace `.vscode/settings.json`, or use `Project Runner: Con
 }
 ```
 
+### Show a Custom Command Button
+
+```json
+{
+  "projectRunner.action.command": "npm run dev"
+}
+```
+
 ### Project With a Frontend Subfolder
 
 ```json
 {
   "projectRunner.cwd": "frontend",
-  "projectRunner.command": "npm run dev",
+  "projectRunner.action.command": "npm run dev",
   "projectRunner.terminalName": "Frontend Dev Server"
 }
 ```
@@ -113,7 +125,7 @@ Add these to your workspace `.vscode/settings.json`, or use `Project Runner: Con
 ```json
 {
   "projectRunner.cwd": "backend",
-  "projectRunner.command": "python -m uvicorn main:app --reload",
+  "projectRunner.action.command": "python -m uvicorn main:app --reload",
   "projectRunner.terminalName": "Backend Server"
 }
 ```
@@ -124,14 +136,14 @@ Add these to your workspace `.vscode/settings.json`, or use `Project Runner: Con
 2. It reads the workspace settings.
 3. It resolves `projectRunner.cwd`.
 4. It opens or reuses a terminal.
-5. It sends `projectRunner.command` to that terminal.
+5. It sends `projectRunner.action.command` to that terminal.
 
 If you have multiple workspace folders open, Project Runner uses the folder for the active editor when possible. If it cannot infer the folder, VS Code asks you to choose one.
 
 ## Known Issues
 
 - Stop and debug buttons are not available yet.
-- Only one run command is supported per workspace.
+- Only one custom command is supported per workspace.
 - The command is sent to a terminal; Project Runner does not currently manage process lifecycle beyond terminal reuse.
 
 ## Roadmap
