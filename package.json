@@ -1,0 +1,96 @@
+{
+  "name": "project-runner",
+  "displayName": "Project Runner",
+  "description": "Run projects from VS Code using configurable project commands.",
+  "version": "0.0.1",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.120.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:project-runner.runProject",
+    "onCommand:project-runner.configureCommand"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "project-runner.runProject",
+        "title": "Project Runner: Run Project",
+        "icon": "$(play)"
+      },
+      {
+        "command": "project-runner.configureCommand",
+        "title": "Project Runner: Configure Run Command",
+        "icon": "$(settings-gear)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "project-runner.runProject",
+          "group": "navigation@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "project-runner.runProject"
+        },
+        {
+          "command": "project-runner.configureCommand"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Project Runner",
+      "properties": {
+        "projectRunner.command": {
+          "type": "string",
+          "default": "npm run dev",
+          "description": "Command used to run the current workspace project."
+        },
+        "projectRunner.cwd": {
+          "type": "string",
+          "default": "",
+          "description": "Optional working directory for the run command. Relative paths are resolved from the workspace folder."
+        },
+        "projectRunner.terminalName": {
+          "type": "string",
+          "default": "Project Runner",
+          "description": "Name of the terminal used by Project Runner."
+        },
+        "projectRunner.showStatusBarButton": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show a status bar button for running the project."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "24.x",
+    "@types/vscode": "1.120.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.0.0",
+    "eslint": "^10.5.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61.1"
+  },
+  "overrides": {
+    "diff": "^8.0.4",
+    "serialize-javascript": "^7.0.6"
+  }
+}
