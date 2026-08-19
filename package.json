@@ -67,6 +67,15 @@
           "type": "boolean",
           "default": true,
           "description": "Show a status bar button for running the project."
+        },
+        "projectRunner.buttonAction": {
+          "type": "string",
+          "enum": [
+            "run",
+            "debug"
+          ],
+          "default": "run",
+          "description": "Action used by the Project Runner play buttons. Use 'run' to execute projectRunner.command or 'debug' to start VS Code debugging like F5."
         }
       }
     }

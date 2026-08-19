@@ -10,6 +10,7 @@ It is intentionally project-based instead of file-based. No matter which file is
 - Use the Command Palette command `Project Runner: Run Project`.
 - Click the `Run Project` button in the bottom status bar.
 - Click the play button in the editor title toolbar.
+- Set the play buttons to run your terminal command or start VS Code debugging like `F5`.
 - Configure the run command from VS Code with `Project Runner: Configure Run Command`.
 - Save commands per workspace, so different projects can use different run commands.
 - Run from the workspace root or a configured subfolder.
@@ -49,6 +50,7 @@ The editor title toolbar button appears near the top-right editor actions. VS Co
 | `projectRunner.cwd` | string | empty | Optional working directory. Relative paths are resolved from the workspace folder. |
 | `projectRunner.terminalName` | string | `Project Runner` | Name of the VS Code terminal used by the extension. |
 | `projectRunner.showStatusBarButton` | boolean | `true` | Shows or hides the bottom status bar button. |
+| `projectRunner.buttonAction` | string | `run` | Use `run` to execute `projectRunner.command`, or `debug` to start VS Code debugging like `F5`. |
 
 ## Example Configurations
 
@@ -75,6 +77,14 @@ Add these to your workspace `.vscode/settings.json`, or use `Project Runner: Con
 ```json
 {
   "projectRunner.command": "docker compose up"
+}
+```
+
+### Start VS Code Debugging
+
+```json
+{
+  "projectRunner.buttonAction": "debug"
 }
 ```
 
