@@ -13,6 +13,7 @@
   "activationEvents": [
     "onStartupFinished",
     "onCommand:project-runner.runProject",
+    "onCommand:project-runner.debugProject",
     "onCommand:project-runner.configureCommand"
   ],
   "main": "./out/extension.js",
@@ -24,6 +25,11 @@
         "icon": "$(play)"
       },
       {
+        "command": "project-runner.debugProject",
+        "title": "Project Runner: Debug Project",
+        "icon": "$(debug-alt)"
+      },
+      {
         "command": "project-runner.configureCommand",
         "title": "Project Runner: Configure Run Command",
         "icon": "$(settings-gear)"
@@ -33,12 +39,22 @@
       "editor/title": [
         {
           "command": "project-runner.runProject",
+          "when": "projectRunner.buttonAction != debug",
+          "group": "navigation@1"
+        },
+        {
+          "command": "project-runner.debugProject",
+          "when": "projectRunner.buttonAction == debug",
           "group": "navigation@1"
         }
       ],
       "commandPalette": [
         {
           "command": "project-runner.runProject"
+        },
+        {
+          "command": "project-runner.debugProject",
+          "when": "false"
         },
         {
           "command": "project-runner.configureCommand"
