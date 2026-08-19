@@ -7,7 +7,7 @@ It gives you separate buttons for VS Code run, VS Code debug, and an optional cu
 ## Features
 
 - Show a `Run Project` button that starts VS Code run-without-debugging.
-- Show a `Debug Project` button that starts VS Code debugging like `F5`.
+- Show a `Debug Project` button that starts VS Code debugging.
 - Show a `Run Command` button only when a custom command is configured.
 - Use the same actions from the Command Palette.
 - Control run and debug buttons independently with boolean settings.
@@ -30,7 +30,7 @@ Project Runner keeps those actions separate, so you can show only the buttons th
 | Command | Description |
 | --- | --- |
 | `Project Runner: Run Project` | Starts VS Code run-without-debugging. |
-| `Project Runner: Debug Project` | Starts VS Code debugging like `F5`. |
+| `Project Runner: Debug Project` | Starts VS Code debugging. |
 | `Project Runner: Run Command` | Runs `projectRunner.action.command` in a VS Code terminal. |
 | `Project Runner: Configure Run Command` | Prompts for a command and saves it to the current workspace settings. |
 
@@ -67,7 +67,7 @@ Because `projectRunner.action.command` is empty by default, the custom command b
 | `projectRunner.terminalName` | string | `Project Runner` | Name of the VS Code terminal used by the extension. |
 | `projectRunner.showStatusBarButton` | boolean | `true` | Shows or hides Project Runner buttons in the bottom status bar. |
 | `projectRunner.action.run` | boolean | `true` | Shows the run action, which starts VS Code run-without-debugging. |
-| `projectRunner.action.debug` | boolean | `true` | Shows the debug action, which starts VS Code debugging like `F5`. |
+| `projectRunner.action.debug` | boolean | `true` | Shows the debug action, which starts VS Code debugging. |
 | `projectRunner.action.command` | string | empty | Optional terminal command. When empty, the command button is hidden. |
 
 ## Example Configurations
