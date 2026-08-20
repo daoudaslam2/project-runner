@@ -8,7 +8,7 @@
     "vscode": "^1.120.0"
   },
   "categories": [
-    "Other"
+    "Programming Languages"
   ],
   "activationEvents": [
     "onStartupFinished",
