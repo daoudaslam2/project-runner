@@ -4,6 +4,7 @@
   "description": "Run projects from VS Code using configurable project commands.",
   "version": "0.0.1",
   "publisher": "local",
+  "icon": "resources/project-runner.png",
   "engines": {
     "vscode": "^1.120.0"
   },
