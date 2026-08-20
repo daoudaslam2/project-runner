@@ -3,7 +3,7 @@
   "displayName": "Project Runner",
   "description": "Run projects from VS Code using configurable project commands.",
   "version": "0.1.0",
-  "publisher": "daoudaslam2",
+  "publisher": "daoudaslam",
   "icon": "resources/project-runner.png",
   "license": "MIT",
   "repository": {
