@@ -1,19 +1,19 @@
 {
-  "name": "project-runner",
-  "displayName": "Project Runner",
+  "name": "universal-project-runner",
+  "displayName": "Universal Project Runner",
   "description": "Run projects from VS Code using configurable project commands.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "daoudaslam",
   "icon": "resources/project-runner.png",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/daoudaslam2/project-runner"
+    "url": "https://github.com/daoudaslam2/universal-project-runner"
   },
   "bugs": {
-    "url": "https://github.com/daoudaslam2/project-runner/issues"
+    "url": "https://github.com/daoudaslam2/universal-project-runner/issues"
   },
-  "homepage": "https://github.com/daoudaslam2/project-runner#readme",
+  "homepage": "https://github.com/daoudaslam2/universal-project-runner#readme",
   "engines": {
     "vscode": "^1.110.0"
   },
