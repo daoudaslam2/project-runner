@@ -2,7 +2,7 @@
   "name": "universal-project-runner",
   "displayName": "Universal Project Runner",
   "description": "Run projects from VS Code using configurable project commands.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "daoudaslam",
   "icon": "resources/project-runner.png",
   "license": "MIT",
@@ -15,7 +15,7 @@
   },
   "homepage": "https://github.com/daoudaslam2/universal-project-runner#readme",
   "engines": {
-    "vscode": "^1.110.0"
+    "vscode": "^1.107.0"
   },
   "categories": [
     "Programming Languages",
@@ -161,7 +161,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "24.x",
-    "@types/vscode": "1.110.0",
+    "@types/vscode": "1.107.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.0.0",
     "eslint": "^10.5.0",
