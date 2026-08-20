@@ -5,6 +5,15 @@
   "version": "0.1.0",
   "publisher": "local",
   "icon": "resources/project-runner.png",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/daoudaslam2/project-runner.git"
+  },
+  "bugs": {
+    "url": "https://github.com/daoudaslam2/project-runner/issues"
+  },
+  "homepage": "https://github.com/daoudaslam2/project-runner#readme",
   "engines": {
     "vscode": "^1.110.0"
   },
