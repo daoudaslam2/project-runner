@@ -2,7 +2,7 @@
   "name": "universal-project-runner",
   "displayName": "Universal Project Runner",
   "description": "Run projects from VS Code using configurable project commands.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "daoudaslam",
   "icon": "resources/project-runner.png",
   "license": "MIT",
