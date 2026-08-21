@@ -11,6 +11,8 @@ All notable changes to Universal Project Runner are documented here.
 - Added command picking when multiple commands are configured.
 - Added a one-time warning when old `projectRunner.*` settings are detected.
 - Removed the bottom status bar stop button and related setting.
+- Removed the bottom status bar command button and related setting.
+- Added an editor title command dropdown for workspaces with multiple named commands.
 
 ## 0.1.2
 

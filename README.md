@@ -10,7 +10,7 @@ It gives you separate actions for VS Code run, VS Code debug, and named terminal
 - Show a `Debug Project` action that starts VS Code debugging.
 - Show a `Run Command` action when at least one named command is configured.
 - Support multiple named project commands in one workspace.
-- Pick a command when more than one command is configured.
+- Show a command dropdown when more than one command is configured.
 - Run a single configured command directly without a picker.
 - Give each command its own `cwd`.
 - Show a `Stop Project` action while a custom command or VS Code debug/run session is active.
@@ -22,7 +22,7 @@ It gives you separate actions for VS Code run, VS Code debug, and named terminal
 - Save command settings per workspace, so different projects can use different commands.
 - Reuse terminals for command runs.
 - Customize the base terminal name.
-- Control each bottom status bar button separately.
+- Control bottom status bar run/debug buttons separately.
 
 ## Why Universal Project Runner?
 
@@ -46,8 +46,8 @@ Universal Project Runner adds two ways to run your project without opening the C
 
 | Location | Button |
 | --- | --- |
-| Bottom status bar | `Run Project`, `Debug Project`, `Run Command`, or any combination |
-| Editor title toolbar | Play icon, debug icon, command icon, or stop icon |
+| Bottom status bar | `Run Project`, `Debug Project`, or both |
+| Editor title toolbar | Play icon, debug icon, command icon, command dropdown, or stop icon |
 
 The editor title toolbar button appears near the top-right editor actions. VS Code-compatible editors do not allow extensions to place arbitrary custom buttons directly in the main app title bar, so this is the closest native top-area location.
 
@@ -61,14 +61,13 @@ By default, Universal Project Runner shows the VS Code run and debug actions:
   "universalProjectRunner.action.debug": true,
   "universalProjectRunner.commands": [],
   "universalProjectRunner.statusBar.showRun": true,
-  "universalProjectRunner.statusBar.showDebug": false,
-  "universalProjectRunner.statusBar.showCommand": false
+  "universalProjectRunner.statusBar.showDebug": false
 }
 ```
 
 By default, only the run action appears in the bottom status bar. The debug action still appears in the editor title toolbar when enabled.
 
-Because `universalProjectRunner.commands` is empty by default, the custom command button is hidden until you add at least one command. To also show it in the bottom status bar, set `universalProjectRunner.statusBar.showCommand` to `true`.
+Because `universalProjectRunner.commands` is empty by default, the custom command button is hidden until you add at least one command. With one command, the editor title toolbar runs it directly. With two or more commands, the editor title toolbar shows a dropdown action that lets you choose the command name.
 
 ## How It Works
 
@@ -82,7 +81,7 @@ For custom command actions:
 
 1. Universal Project Runner finds the current workspace folder.
 2. It reads `universalProjectRunner.commands`.
-3. It runs the only command directly, or shows a picker when multiple commands exist.
+3. It runs the only command directly, or shows a command picker when multiple commands exist.
 4. It resolves the selected command's `cwd`.
 5. It opens or reuses a terminal for that workspace command.
 6. It sends the selected command text to that terminal.
@@ -99,7 +98,6 @@ If you have multiple workspace folders open, Universal Project Runner uses the f
 | `universalProjectRunner.commands` | array | `[]` | Named terminal commands. Each item has `name`, `cwd`, and `command`. |
 | `universalProjectRunner.statusBar.showRun` | boolean | `true` | Shows the run action in the bottom status bar. |
 | `universalProjectRunner.statusBar.showDebug` | boolean | `false` | Shows the debug action in the bottom status bar. |
-| `universalProjectRunner.statusBar.showCommand` | boolean | `false` | Shows the custom command action in the bottom status bar when commands are configured. |
 
 ## Command Items
 
@@ -172,8 +170,7 @@ Add these to your workspace `.vscode/settings.json`, or use `Universal Project R
       "cwd": "backend",
       "command": "python -m uvicorn main:app --reload"
     }
-  ],
-  "universalProjectRunner.statusBar.showCommand": true
+  ]
 }
 ```
 
@@ -243,7 +240,7 @@ Use named commands instead:
 - Renamed settings from `projectRunner.*` to `universalProjectRunner.*`.
 - Replaced the old single command setting with `universalProjectRunner.commands`.
 - Added multiple named terminal commands with per-command working directories.
-- Added command picking when multiple commands are configured.
+- Added a command dropdown when multiple commands are configured.
 
 ### 0.0.1
 

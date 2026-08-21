@@ -26,6 +26,7 @@
     "onCommand:project-runner.runProject",
     "onCommand:project-runner.debugProject",
     "onCommand:project-runner.runCommand",
+    "onCommand:project-runner.pickCommand",
     "onCommand:project-runner.stopCommand",
     "onCommand:project-runner.configureCommand"
   ],
@@ -48,6 +49,11 @@
         "icon": "$(run-coverage)"
       },
       {
+        "command": "project-runner.pickCommand",
+        "title": "Universal Project Runner: Select Command",
+        "icon": "$(play)"
+      },
+      {
         "command": "project-runner.stopCommand",
         "title": "Universal Project Runner: Stop Project",
         "icon": "$(debug-stop)"
@@ -56,6 +62,13 @@
         "command": "project-runner.configureCommand",
         "title": "Universal Project Runner: Configure Run Command",
         "icon": "$(settings-gear)"
+      }
+    ],
+    "submenus": [
+      {
+        "id": "project-runner.commandMenu",
+        "label": "Universal Project Runner: Commands",
+        "icon": "$(play)"
       }
     ],
     "menus": {
@@ -72,7 +85,12 @@
         },
         {
           "command": "project-runner.runCommand",
-          "when": "universalProjectRunner.hasCommandAction && !universalProjectRunner.commandRunning",
+          "when": "universalProjectRunner.hasSingleCommandAction && !universalProjectRunner.commandRunning",
+          "group": "navigation@3"
+        },
+        {
+          "submenu": "project-runner.commandMenu",
+          "when": "universalProjectRunner.hasMultipleCommandActions && !universalProjectRunner.commandRunning",
           "group": "navigation@3"
         },
         {
@@ -96,6 +114,16 @@
         },
         {
           "command": "project-runner.configureCommand"
+        }
+      ],
+      "project-runner.commandMenu": [
+        {
+          "command": "project-runner.pickCommand",
+          "group": "navigation@1"
+        },
+        {
+          "command": "project-runner.configureCommand",
+          "group": "navigation@2"
         }
       ]
     },
@@ -153,11 +181,6 @@
           "type": "boolean",
           "default": false,
           "description": "Show the Universal Project Runner debug action in the status bar."
-        },
-        "universalProjectRunner.statusBar.showCommand": {
-          "type": "boolean",
-          "default": false,
-          "description": "Show the Universal Project Runner custom command action in the status bar when commands are configured."
         }
       }
     }
