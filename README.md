@@ -71,6 +71,23 @@ By default, only the run action appears in the bottom status bar. The debug acti
 
 Because `universalProjectRunner.commands` is empty by default, the custom command button is hidden until you add at least one command. To also show it in the bottom status bar, set `universalProjectRunner.statusBar.showCommand` to `true`.
 
+## How It Works
+
+For VS Code run and debug actions, Universal Project Runner delegates to VS Code's built-in run/debug commands. It also listens for VS Code debug/run sessions started outside Universal Project Runner, such as from the menu, keyboard shortcuts, or the Run and Debug panel.
+
+Note: VS Code run/debug actions need a project debug configuration. If your project does not have one yet, create `.vscode/launch.json` once from the Run and Debug view, then Universal Project Runner can reuse it through the run and debug actions.
+
+For custom command actions:
+
+1. Universal Project Runner finds the current workspace folder.
+2. It reads `universalProjectRunner.commands`.
+3. It runs the only command directly, or shows a picker when multiple commands exist.
+4. It resolves the selected command's `cwd`.
+5. It opens or reuses a terminal for that workspace command.
+6. It sends the selected command text to that terminal.
+
+If you have multiple workspace folders open, Universal Project Runner uses the folder for the active editor when possible. If it cannot infer the folder, the editor asks you to choose one.
+
 ## Extension Settings
 
 | Setting | Type | Default | Description |
@@ -194,21 +211,6 @@ Add these to your workspace `.vscode/settings.json`, or use `Universal Project R
   "universalProjectRunner.statusBar.showStopCommand": false
 }
 ```
-
-## How It Works
-
-For VS Code run and debug actions, Universal Project Runner delegates to VS Code's built-in run/debug commands. It also listens for VS Code debug/run sessions started outside Universal Project Runner, such as from the menu, keyboard shortcuts, or the Run and Debug panel.
-
-For custom command actions:
-
-1. Universal Project Runner finds the current workspace folder.
-2. It reads `universalProjectRunner.commands`.
-3. It runs the only command directly, or shows a picker when multiple commands exist.
-4. It resolves the selected command's `cwd`.
-5. It opens or reuses a terminal for that workspace command.
-6. It sends the selected command text to that terminal.
-
-If you have multiple workspace folders open, Universal Project Runner uses the folder for the active editor when possible. If it cannot infer the folder, the editor asks you to choose one.
 
 ## Migrating from Project Runner Settings
 
