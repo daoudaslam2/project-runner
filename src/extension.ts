@@ -3,6 +3,9 @@ import * as path from 'path';
 
 const terminalByWorkspace = new Map<string, vscode.Terminal>();
 const nativeDebugSessions = new Set<vscode.DebugSession>();
+const pendingCommandTerminals = new Set<vscode.Terminal>();
+const pendingCommandTimeouts = new Map<vscode.Terminal, ReturnType<typeof setTimeout>>();
+const commandExecutions = new Map<vscode.TerminalShellExecution, vscode.Terminal>();
 let runningCommandTerminal: vscode.Terminal | undefined;
 let nativeActionRunning = false;
 
@@ -69,9 +72,7 @@ export function activate(context: vscode.ExtensionContext) {
 		const cwd = resolveCwd(workspaceFolder, command.cwd);
 		const terminal = getOrCreateTerminal(workspaceFolder, config.terminalName, command, cwd);
 		terminal.show();
-		terminal.sendText(command.command);
-		runningCommandTerminal = terminal;
-		updateActionVisibility(runStatusBarItem, debugStatusBarItem);
+		runTerminalCommand(terminal, command.command, runStatusBarItem, debugStatusBarItem);
 	};
 
 	const runCommand = vscode.commands.registerCommand('project-runner.runCommand', () => runConfiguredCommand(false));
@@ -179,7 +180,37 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		}
 
+		clearPendingCommandTerminal(terminal);
+		pendingCommandTerminals.delete(terminal);
+		for (const [execution, executionTerminal] of commandExecutions.entries()) {
+			if (executionTerminal === terminal) {
+				commandExecutions.delete(execution);
+			}
+		}
+
 		if (runningCommandTerminal === terminal) {
+			runningCommandTerminal = undefined;
+			updateActionVisibility(runStatusBarItem, debugStatusBarItem);
+		}
+	});
+
+	const terminalExecutionStart = vscode.window.onDidStartTerminalShellExecution((event) => {
+		if (!pendingCommandTerminals.delete(event.terminal)) {
+			return;
+		}
+
+		clearPendingCommandTerminal(event.terminal);
+		commandExecutions.set(event.execution, event.terminal);
+		runningCommandTerminal = event.terminal;
+		updateActionVisibility(runStatusBarItem, debugStatusBarItem);
+	});
+
+	const terminalExecutionEnd = vscode.window.onDidEndTerminalShellExecution((event) => {
+		if (!commandExecutions.delete(event.execution)) {
+			return;
+		}
+
+		if (runningCommandTerminal === event.terminal) {
 			runningCommandTerminal = undefined;
 			updateActionVisibility(runStatusBarItem, debugStatusBarItem);
 		}
@@ -218,6 +249,8 @@ export function activate(context: vscode.ExtensionContext) {
 		stopCommand,
 		configureCommand,
 		terminalClose,
+		terminalExecutionStart,
+		terminalExecutionEnd,
 		debugStart,
 		debugTerminate,
 		configChange,
@@ -227,6 +260,49 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {}
+
+function runTerminalCommand(
+	terminal: vscode.Terminal,
+	commandLine: string,
+	runStatusBarItem: vscode.StatusBarItem,
+	debugStatusBarItem: vscode.StatusBarItem
+): void {
+	pendingCommandTerminals.add(terminal);
+	clearPendingCommandTerminal(terminal);
+	pendingCommandTimeouts.set(terminal, setTimeout(() => {
+		pendingCommandTerminals.delete(terminal);
+		pendingCommandTimeouts.delete(terminal);
+	}, 5000));
+
+	try {
+		if (terminal.shellIntegration) {
+			const execution = terminal.shellIntegration.executeCommand(commandLine);
+			clearPendingCommandTerminal(terminal);
+			pendingCommandTerminals.delete(terminal);
+			commandExecutions.set(execution, terminal);
+			runningCommandTerminal = terminal;
+			updateActionVisibility(runStatusBarItem, debugStatusBarItem);
+			return;
+		}
+	} catch {
+		clearPendingCommandTerminal(terminal);
+		pendingCommandTerminals.delete(terminal);
+	}
+
+	terminal.sendText(commandLine);
+	runningCommandTerminal = terminal;
+	updateActionVisibility(runStatusBarItem, debugStatusBarItem);
+}
+
+function clearPendingCommandTerminal(terminal: vscode.Terminal): void {
+	const timeout = pendingCommandTimeouts.get(terminal);
+	if (!timeout) {
+		return;
+	}
+
+	clearTimeout(timeout);
+	pendingCommandTimeouts.delete(terminal);
+}
 
 async function pickWorkspaceFolder(): Promise<vscode.WorkspaceFolder | undefined> {
 	const folders = vscode.workspace.workspaceFolders;
