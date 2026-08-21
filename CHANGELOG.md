@@ -13,7 +13,6 @@ All notable changes to Universal Project Runner are documented here.
 - Removed the bottom status bar stop button and related setting.
 - Removed the bottom status bar command button and related setting.
 - Added an editor title command dropdown for workspaces with multiple named commands.
-- Changed custom command running state to use terminal shell execution tracking when available.
 
 ## 0.1.2
 
