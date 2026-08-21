@@ -9,6 +9,7 @@ All notable changes to Universal Project Runner are documented here.
 - Added support for multiple named terminal commands.
 - Added per-command working directories.
 - Added optional per-command `preCommand` support.
+- Added a short built-in startup wait before sending commands to newly created terminals.
 - Added command picking when multiple commands are configured.
 - Added a one-time warning when old `projectRunner.*` settings are detected.
 - Removed the bottom status bar stop button and related setting.

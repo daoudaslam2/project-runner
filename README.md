@@ -85,8 +85,9 @@ For custom command actions:
 3. It runs the only command directly, or shows a command picker when multiple commands exist.
 4. It resolves the selected command's `cwd`.
 5. It opens or reuses a terminal for that workspace command.
-6. It sends `preCommand` first when configured.
-7. It sends the selected command text to that terminal.
+6. It waits briefly when a new terminal is created so editor-managed shell setup can finish.
+7. It sends `preCommand` first when configured.
+8. It sends the selected command text to that terminal.
 
 If you have multiple workspace folders open, Universal Project Runner uses the folder for the active editor when possible. If it cannot infer the folder, the editor asks you to choose one.
 

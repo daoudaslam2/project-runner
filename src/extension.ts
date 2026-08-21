@@ -72,8 +72,12 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 
 		const cwd = resolveCwd(workspaceFolder, command.cwd);
-		const terminal = getOrCreateTerminal(workspaceFolder, config.terminalName, command, cwd);
+		const { terminal, created } = getOrCreateTerminal(workspaceFolder, config.terminalName, command, cwd);
 		terminal.show();
+		if (created) {
+			await waitForTerminalStartup();
+		}
+
 		if (command.preCommand) {
 			terminal.sendText(command.preCommand);
 		}
@@ -320,11 +324,11 @@ function getOrCreateTerminal(
 	terminalName: string,
 	command: RunnerCommand,
 	cwd: string
-): vscode.Terminal {
+): { terminal: vscode.Terminal; created: boolean } {
 	const terminalKey = `${workspaceFolder.uri.fsPath}:${command.name}`;
 	const existingTerminal = terminalByWorkspace.get(terminalKey);
 	if (existingTerminal) {
-		return existingTerminal;
+		return { terminal: existingTerminal, created: false };
 	}
 
 	const terminal = vscode.window.createTerminal({
@@ -333,7 +337,11 @@ function getOrCreateTerminal(
 	});
 
 	terminalByWorkspace.set(terminalKey, terminal);
-	return terminal;
+	return { terminal, created: true };
+}
+
+function waitForTerminalStartup(): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, 2000));
 }
 
 function createNativeDebugAction(
