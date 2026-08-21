@@ -51,7 +51,10 @@
       {
         "command": "project-runner.pickCommand",
         "title": "Universal Project Runner: Select Command",
-        "icon": "$(play)"
+        "icon": {
+          "light": "resources/play-dropdown.svg",
+          "dark": "resources/play-dropdown.svg"
+        }
       },
       {
         "command": "project-runner.stopCommand",
@@ -62,13 +65,6 @@
         "command": "project-runner.configureCommand",
         "title": "Universal Project Runner: Configure Run Command",
         "icon": "$(settings-gear)"
-      }
-    ],
-    "submenus": [
-      {
-        "id": "project-runner.commandMenu",
-        "label": "Universal Project Runner: Commands",
-        "icon": "$(play)"
       }
     ],
     "menus": {
@@ -89,7 +85,7 @@
           "group": "navigation@3"
         },
         {
-          "submenu": "project-runner.commandMenu",
+          "command": "project-runner.pickCommand",
           "when": "universalProjectRunner.hasMultipleCommandActions && !universalProjectRunner.commandRunning",
           "group": "navigation@3"
         },
@@ -114,16 +110,6 @@
         },
         {
           "command": "project-runner.configureCommand"
-        }
-      ],
-      "project-runner.commandMenu": [
-        {
-          "command": "project-runner.pickCommand",
-          "group": "navigation@1"
-        },
-        {
-          "command": "project-runner.configureCommand",
-          "group": "navigation@2"
         }
       ]
     },
