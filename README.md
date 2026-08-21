@@ -75,8 +75,7 @@ Because `universalProjectRunner.commands` is empty by default, the custom comman
 
 For VS Code run and debug actions, Universal Project Runner delegates to VS Code's built-in run/debug commands. It also listens for VS Code debug/run sessions started outside Universal Project Runner, such as from the menu, keyboard shortcuts, or the Run and Debug panel.
 
-> [!IMPORTANT]
-> VS Code run/debug actions use the editor's built-in project launch configuration. If your project does not have one yet, create `.vscode/launch.json` once from the Run and Debug view, then Universal Project Runner can reuse it through the run and debug actions.
+> **Important:** VS Code run/debug actions use the editor's built-in project launch configuration. If your project does not have one yet, create `.vscode/launch.json` once from the Run and Debug view, then Universal Project Runner can reuse it through the run and debug actions.
 >
 > Use `Run Project` and `Debug Project` when your project works with the default framework launch setup. Use named commands when your project needs custom run commands, environment variables, ports, subfolders, Docker commands, or separate frontend/backend processes.
 
