@@ -1,25 +1,25 @@
 # Universal Project Runner
 
-Universal Project Runner is a small VS Code-compatible extension for adding project action buttons to your editor.
+Universal Project Runner is a small extension for VS Code-compatible editors, including VS Code, Cursor, Antigravity, and other editors that support the VS Code extension API.
 
-It gives you separate actions for VS Code run, VS Code debug, and named terminal commands. Terminal commands are project-based instead of file-based, so they run from the workspace folder or from the command-specific working directory you configure.
+It gives you separate actions for editor run, editor debug, and named terminal commands. Terminal commands are project-based instead of file-based, so they run from the workspace folder or from the command-specific working directory you configure.
 
 ## Features
 
-- Show a `Run Project` action that starts VS Code run-without-debugging.
-- Show a `Debug Project` action that starts VS Code debugging.
+- Show a `Run Project` action that starts the editor's run-without-debugging flow.
+- Show a `Debug Project` action that starts the editor's debugging flow.
 - Show a `Run Command` action when at least one named command is configured.
 - Support multiple named project commands in one workspace.
 - Show a command dropdown when more than one command is configured.
 - Run a single configured command directly without a picker.
 - Run an optional `preCommand` before the main command in the same terminal.
 - Give each command its own `cwd`.
-- Show a `Stop Project` action while a custom command or VS Code debug/run session is active.
-- Hide run, debug, and command actions while a custom command or VS Code debug/run session is active.
+- Show a `Stop Project` action while a custom command or editor debug/run session is active.
+- Hide run, debug, and command actions while a custom command or editor debug/run session is active.
 - Use the same actions from the Command Palette.
 - Control run and debug actions independently with boolean settings.
 - Keep custom commands empty by default, so no extra command action appears until you need one.
-- Configure named commands from VS Code with `Universal Project Runner: Configure Run Command`.
+- Configure named commands from the editor with `Universal Project Runner: Configure Run Command`.
 - Save command settings per workspace, so different projects can use different commands.
 - Reuse terminals for command runs.
 - Customize the base terminal name.
@@ -27,7 +27,7 @@ It gives you separate actions for VS Code run, VS Code debug, and named terminal
 
 ## Why Universal Project Runner?
 
-Many run buttons are tied to the active file. That works for scripts, but it is not ideal for real projects where you may want one-click VS Code run/debug actions plus project commands like `npm run dev`, `python -m uvicorn main:app --reload`, `docker compose up`, or separate frontend/backend commands.
+Many run buttons are tied to the active file. That works for scripts, but it is not ideal for real projects where you may want one-click editor run/debug actions plus project commands like `npm run dev`, `python -m uvicorn main:app --reload`, `docker compose up`, or separate frontend/backend commands.
 
 Universal Project Runner keeps those actions separate, so you can show only the buttons that make sense for each workspace.
 
@@ -35,10 +35,10 @@ Universal Project Runner keeps those actions separate, so you can show only the 
 
 | Command | Description |
 | --- | --- |
-| `Universal Project Runner: Run Project` | Starts VS Code run-without-debugging. |
-| `Universal Project Runner: Debug Project` | Starts VS Code debugging. |
-| `Universal Project Runner: Run Command` | Runs a configured item from `universalProjectRunner.commands` in a VS Code terminal. |
-| `Universal Project Runner: Stop Project` | Stops the active custom command or VS Code debug/run session. For custom commands, it sends Ctrl+C to the terminal. |
+| `Universal Project Runner: Run Project` | Starts the editor's run-without-debugging flow. |
+| `Universal Project Runner: Debug Project` | Starts the editor's debugging flow. |
+| `Universal Project Runner: Run Command` | Runs a configured item from `universalProjectRunner.commands` in the integrated terminal. |
+| `Universal Project Runner: Stop Project` | Stops the active custom command or editor debug/run session. For custom commands, it sends Ctrl+C to the terminal. |
 | `Universal Project Runner: Configure Run Command` | Adds or updates a named workspace command. |
 
 ## UI Buttons
@@ -50,11 +50,11 @@ Universal Project Runner adds two ways to run your project without opening the C
 | Bottom status bar | `Run Project`, `Debug Project`, or both |
 | Editor title toolbar | Play icon, debug icon, command icon, command dropdown, or stop icon |
 
-The editor title toolbar button appears near the top-right editor actions. VS Code-compatible editors do not allow extensions to place arbitrary custom buttons directly in the main app title bar, so this is the closest native top-area location.
+The editor title toolbar button appears near the top-right editor actions. VS Code-compatible editors generally do not allow extensions to place arbitrary custom buttons directly in the main app title bar, so this is the closest native top-area location.
 
 ## Default Behavior
 
-By default, Universal Project Runner shows the VS Code run and debug actions:
+By default, Universal Project Runner enables the editor run and debug actions:
 
 ```json
 {
@@ -72,9 +72,9 @@ Because `universalProjectRunner.commands` is empty by default, the custom comman
 
 ## How It Works
 
-For VS Code run and debug actions, Universal Project Runner delegates to VS Code's built-in run/debug commands. It also listens for VS Code debug/run sessions started outside Universal Project Runner, such as from the menu, keyboard shortcuts, or the Run and Debug panel.
+For run and debug actions, Universal Project Runner delegates to the editor's built-in run/debug commands. It also listens for compatible debug/run sessions started outside Universal Project Runner, such as from the menu, keyboard shortcuts, or the Run and Debug panel.
 
-> **Important:** VS Code run/debug actions use the editor's built-in project launch configuration. If your project does not have one yet, create `.vscode/launch.json` once from the Run and Debug view, then Universal Project Runner can reuse it through the run and debug actions.
+> **Important:** Run/debug actions use the editor's built-in project launch configuration. If your project does not have one yet, create `.vscode/launch.json` once from the Run and Debug view, then Universal Project Runner can reuse it through the run and debug actions.
 >
 > Use `Run Project` and `Debug Project` when your project works with the default framework launch setup. Use named commands when your project needs custom run commands, environment variables, ports, subfolders, Docker commands, or separate frontend/backend processes.
 
@@ -95,9 +95,9 @@ If you have multiple workspace folders open, Universal Project Runner uses the f
 
 | Setting | Type | Default | Description |
 | --- | --- | --- | --- |
-| `universalProjectRunner.terminalName` | string | `Universal Project Runner` | Base name of the VS Code terminal used by the extension. |
-| `universalProjectRunner.action.run` | boolean | `true` | Shows the run action, which starts VS Code run-without-debugging. |
-| `universalProjectRunner.action.debug` | boolean | `true` | Shows the debug action, which starts VS Code debugging. |
+| `universalProjectRunner.terminalName` | string | `Universal Project Runner` | Base name of the integrated terminal used by the extension. |
+| `universalProjectRunner.action.run` | boolean | `true` | Shows the run action, which starts the editor's run-without-debugging flow. |
+| `universalProjectRunner.action.debug` | boolean | `true` | Shows the debug action, which starts the editor's debugging flow. |
 | `universalProjectRunner.commands` | array | `[]` | Named terminal commands. Each item has `name`, `cwd`, `preCommand`, and `command`. |
 | `universalProjectRunner.statusBar.showRun` | boolean | `true` | Shows the run action in the bottom status bar. |
 | `universalProjectRunner.statusBar.showDebug` | boolean | `false` | Shows the debug action in the bottom status bar. |
@@ -115,7 +115,7 @@ Each item in `universalProjectRunner.commands` supports:
 
 ## Example Configurations
 
-Add these to your workspace `.vscode/settings.json`, or use `Universal Project Runner: Configure Run Command`.
+Add these to your workspace `.vscode/settings.json`, or use `Universal Project Runner: Configure Run Command` from the Command Palette.
 
 ### Node.js or React
 
@@ -251,7 +251,7 @@ Use named commands instead:
 
 Initial Project Runner release with:
 
-- VS Code run and debug action buttons.
+- Editor run and debug action buttons.
 - Optional custom terminal command button.
 - Command Palette actions.
 - Bottom status bar buttons.
