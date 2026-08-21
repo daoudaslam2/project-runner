@@ -9,6 +9,7 @@ let nativeActionRunning = false;
 type RunnerCommand = {
 	name: string;
 	command: string;
+	preCommand: string;
 	cwd: string;
 };
 
@@ -73,6 +74,9 @@ export function activate(context: vscode.ExtensionContext) {
 		const cwd = resolveCwd(workspaceFolder, command.cwd);
 		const terminal = getOrCreateTerminal(workspaceFolder, config.terminalName, command, cwd);
 		terminal.show();
+		if (command.preCommand) {
+			terminal.sendText(command.preCommand);
+		}
 		terminal.sendText(command.command);
 		if (config.commands.length === 1) {
 			runningCommandTerminal = terminal;
@@ -142,6 +146,17 @@ export function activate(context: vscode.ExtensionContext) {
 			return;
 		}
 
+		const preCommand = await vscode.window.showInputBox({
+			title: 'Universal Project Runner Pre Command',
+			prompt: 'Optional command to run first in the same terminal',
+			value: currentCommand?.preCommand ?? '',
+			ignoreFocusOut: true
+		});
+
+		if (preCommand === undefined) {
+			return;
+		}
+
 		const cwd = await vscode.window.showInputBox({
 			title: 'Universal Project Runner Working Directory',
 			prompt: 'Optional working directory. Relative paths are resolved from the workspace folder.',
@@ -156,6 +171,7 @@ export function activate(context: vscode.ExtensionContext) {
 		const nextCommand = {
 			name: name.trim() || command.trim(),
 			command: command.trim(),
+			preCommand: preCommand.trim(),
 			cwd: cwd.trim()
 		};
 
@@ -388,9 +404,10 @@ function normalizeRunnerCommands(commands: unknown): RunnerCommand[] {
 			const name = typeof record.name === 'string' && record.name.trim()
 				? record.name.trim()
 				: `Command ${index + 1}`;
+			const preCommand = typeof record.preCommand === 'string' ? record.preCommand.trim() : '';
 			const cwd = typeof record.cwd === 'string' ? record.cwd.trim() : '';
 
-			return { name, command, cwd };
+			return { name, command, preCommand, cwd };
 		})
 		.filter((command): command is RunnerCommand => Boolean(command));
 }
@@ -404,7 +421,7 @@ async function pickRunnerCommand(commands: RunnerCommand[], forcePick = false): 
 		commands.map((command) => ({
 			label: command.name,
 			description: command.cwd || 'workspace root',
-			detail: command.command,
+			detail: command.preCommand ? `${command.preCommand} && ${command.command}` : command.command,
 			command
 		})),
 		{
@@ -428,7 +445,7 @@ async function pickCommandToConfigure(commands: RunnerCommand[]): Promise<Runner
 			...commands.map((command) => ({
 				label: command.name,
 				description: command.cwd || 'workspace root',
-				detail: command.command,
+				detail: command.preCommand ? `${command.preCommand} && ${command.command}` : command.command,
 				command
 			}))
 		],

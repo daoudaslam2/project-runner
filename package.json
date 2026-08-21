@@ -148,6 +148,11 @@
                 "default": "",
                 "description": "Optional working directory. Relative paths are resolved from the workspace folder."
               },
+              "preCommand": {
+                "type": "string",
+                "default": "",
+                "description": "Optional command to run first in the same terminal before the main command."
+              },
               "command": {
                 "type": "string",
                 "description": "Terminal command to run."

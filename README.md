@@ -12,6 +12,7 @@ It gives you separate actions for VS Code run, VS Code debug, and named terminal
 - Support multiple named project commands in one workspace.
 - Show a command dropdown when more than one command is configured.
 - Run a single configured command directly without a picker.
+- Run an optional `preCommand` before the main command in the same terminal.
 - Give each command its own `cwd`.
 - Show a `Stop Project` action while a custom command or VS Code debug/run session is active.
 - Hide run, debug, and command actions while a custom command or VS Code debug/run session is active.
@@ -84,7 +85,8 @@ For custom command actions:
 3. It runs the only command directly, or shows a command picker when multiple commands exist.
 4. It resolves the selected command's `cwd`.
 5. It opens or reuses a terminal for that workspace command.
-6. It sends the selected command text to that terminal.
+6. It sends `preCommand` first when configured.
+7. It sends the selected command text to that terminal.
 
 If you have multiple workspace folders open, Universal Project Runner uses the folder for the active editor when possible. If it cannot infer the folder, the editor asks you to choose one.
 
@@ -95,7 +97,7 @@ If you have multiple workspace folders open, Universal Project Runner uses the f
 | `universalProjectRunner.terminalName` | string | `Universal Project Runner` | Base name of the VS Code terminal used by the extension. |
 | `universalProjectRunner.action.run` | boolean | `true` | Shows the run action, which starts VS Code run-without-debugging. |
 | `universalProjectRunner.action.debug` | boolean | `true` | Shows the debug action, which starts VS Code debugging. |
-| `universalProjectRunner.commands` | array | `[]` | Named terminal commands. Each item has `name`, `cwd`, and `command`. |
+| `universalProjectRunner.commands` | array | `[]` | Named terminal commands. Each item has `name`, `cwd`, `preCommand`, and `command`. |
 | `universalProjectRunner.statusBar.showRun` | boolean | `true` | Shows the run action in the bottom status bar. |
 | `universalProjectRunner.statusBar.showDebug` | boolean | `false` | Shows the debug action in the bottom status bar. |
 
@@ -107,6 +109,7 @@ Each item in `universalProjectRunner.commands` supports:
 | --- | --- | --- | --- |
 | `name` | string | yes | Name shown in the command picker. |
 | `cwd` | string | no | Optional working directory. Relative paths are resolved from the workspace folder. |
+| `preCommand` | string | no | Optional command to run first in the same terminal. |
 | `command` | string | yes | Terminal command to run. |
 
 ## Example Configurations
@@ -135,6 +138,7 @@ Add these to your workspace `.vscode/settings.json`, or use `Universal Project R
     {
       "name": "FastAPI",
       "cwd": "",
+      "preCommand": "source .venv/bin/activate",
       "command": "python -m uvicorn main:app --reload"
     }
   ]
