@@ -2,7 +2,7 @@
   "name": "universal-project-runner",
   "displayName": "Universal Project Runner",
   "description": "Run projects from VS Code using configurable project commands.",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "publisher": "daoudaslam",
   "icon": "resources/project-runner.png",
   "license": "MIT",
@@ -34,27 +34,27 @@
     "commands": [
       {
         "command": "project-runner.runProject",
-        "title": "Project Runner: Run Project",
+        "title": "Universal Project Runner: Run Project",
         "icon": "$(play)"
       },
       {
         "command": "project-runner.debugProject",
-        "title": "Project Runner: Debug Project",
+        "title": "Universal Project Runner: Debug Project",
         "icon": "$(debug-alt)"
       },
       {
         "command": "project-runner.runCommand",
-        "title": "Project Runner: Run Command",
+        "title": "Universal Project Runner: Run Command",
         "icon": "$(run-coverage)"
       },
       {
         "command": "project-runner.stopCommand",
-        "title": "Project Runner: Stop Project",
+        "title": "Universal Project Runner: Stop Project",
         "icon": "$(debug-stop)"
       },
       {
         "command": "project-runner.configureCommand",
-        "title": "Project Runner: Configure Run Command",
+        "title": "Universal Project Runner: Configure Run Command",
         "icon": "$(settings-gear)"
       }
     ],
@@ -62,22 +62,22 @@
       "editor/title": [
         {
           "command": "project-runner.runProject",
-          "when": "projectRunner.action.run && !projectRunner.commandRunning",
+          "when": "universalProjectRunner.action.run && !universalProjectRunner.commandRunning",
           "group": "navigation@1"
         },
         {
           "command": "project-runner.debugProject",
-          "when": "projectRunner.action.debug && !projectRunner.commandRunning",
+          "when": "universalProjectRunner.action.debug && !universalProjectRunner.commandRunning",
           "group": "navigation@2"
         },
         {
           "command": "project-runner.runCommand",
-          "when": "projectRunner.hasCommandAction && !projectRunner.commandRunning",
+          "when": "universalProjectRunner.hasCommandAction && !universalProjectRunner.commandRunning",
           "group": "navigation@3"
         },
         {
           "command": "project-runner.stopCommand",
-          "when": "projectRunner.commandRunning",
+          "when": "universalProjectRunner.commandRunning",
           "group": "navigation@3"
         }
       ],
@@ -100,52 +100,69 @@
       ]
     },
     "configuration": {
-      "title": "Project Runner",
+      "title": "Universal Project Runner",
       "properties": {
-        "projectRunner.cwd": {
+        "universalProjectRunner.terminalName": {
           "type": "string",
-          "default": "",
-          "description": "Optional working directory for the run command. Relative paths are resolved from the workspace folder."
+          "default": "Universal Project Runner",
+          "description": "Base name of the terminal used by Universal Project Runner."
         },
-        "projectRunner.terminalName": {
-          "type": "string",
-          "default": "Project Runner",
-          "description": "Name of the terminal used by Project Runner."
-        },
-        "projectRunner.action.run": {
+        "universalProjectRunner.action.run": {
           "type": "boolean",
           "default": true,
-          "description": "Show the Project Runner run action. This action starts VS Code running without debugging."
+          "description": "Show the Universal Project Runner run action. This action starts VS Code running without debugging."
         },
-        "projectRunner.action.debug": {
+        "universalProjectRunner.action.debug": {
           "type": "boolean",
           "default": true,
-          "description": "Show the Project Runner debug action. This action starts VS Code debugging like F5."
+          "description": "Show the Universal Project Runner debug action. This action starts VS Code debugging."
         },
-        "projectRunner.action.command": {
-          "type": "string",
-          "default": "",
-          "description": "Optional terminal command action. When empty, the command button is hidden. When set, Project Runner shows a separate command button that runs this text in the terminal."
+        "universalProjectRunner.commands": {
+          "type": "array",
+          "default": [],
+          "description": "Named terminal commands available to Universal Project Runner.",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "command"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name shown in the command picker."
+              },
+              "cwd": {
+                "type": "string",
+                "default": "",
+                "description": "Optional working directory. Relative paths are resolved from the workspace folder."
+              },
+              "command": {
+                "type": "string",
+                "description": "Terminal command to run."
+              }
+            }
+          }
         },
-        "projectRunner.statusBar.showRun": {
+        "universalProjectRunner.statusBar.showRun": {
           "type": "boolean",
           "default": true,
-          "description": "Show the Project Runner run action in the status bar."
+          "description": "Show the Universal Project Runner run action in the status bar."
         },
-        "projectRunner.statusBar.showDebug": {
+        "universalProjectRunner.statusBar.showDebug": {
           "type": "boolean",
           "default": false,
-          "description": "Show the Project Runner debug action in the status bar."
+          "description": "Show the Universal Project Runner debug action in the status bar."
         },
-        "projectRunner.statusBar.showCommand": {
+        "universalProjectRunner.statusBar.showCommand": {
           "type": "boolean",
           "default": false,
-          "description": "Show the Project Runner custom command action in the status bar when projectRunner.action.command is set."
+          "description": "Show the Universal Project Runner custom command action in the status bar when commands are configured."
         },
-        "projectRunner.statusBar.showStopCommand": {
+        "universalProjectRunner.statusBar.showStopCommand": {
           "type": "boolean",
           "default": true,
-          "description": "Show the Project Runner stop action in the status bar while a Project Runner action is running."
+          "description": "Show the Universal Project Runner stop action in the status bar while an action is running."
         }
       }
     }
