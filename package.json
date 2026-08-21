@@ -51,7 +51,7 @@
       {
         "command": "project-runner.pickCommand",
         "title": "Universal Project Runner: Select Command",
-        "icon": "$(play)"
+        "icon": "$(run-below)"
       },
       {
         "command": "project-runner.stopCommand",
