@@ -70,8 +70,10 @@ export function activate(context: vscode.ExtensionContext) {
 		const terminal = getOrCreateTerminal(workspaceFolder, config.terminalName, command, cwd);
 		terminal.show();
 		terminal.sendText(command.command);
-		runningCommandTerminal = terminal;
-		updateActionVisibility(runStatusBarItem, debugStatusBarItem);
+		if (config.commands.length === 1) {
+			runningCommandTerminal = terminal;
+			updateActionVisibility(runStatusBarItem, debugStatusBarItem);
+		}
 	};
 
 	const runCommand = vscode.commands.registerCommand('project-runner.runCommand', () => runConfiguredCommand(false));
