@@ -60,9 +60,13 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 
 		const config = getRunnerConfig(workspaceFolder);
+		if (config.commands.length === 0) {
+			vscode.window.showErrorMessage('Set universalProjectRunner.commands before running a command.');
+			return;
+		}
+
 		const command = await pickRunnerCommand(config.commands, forcePick);
 		if (!command) {
-			vscode.window.showErrorMessage('Set universalProjectRunner.commands before running a command.');
 			return;
 		}
 
