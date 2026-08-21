@@ -20,7 +20,6 @@ type RunnerConfig = {
 	statusBarShowRun: boolean;
 	statusBarShowDebug: boolean;
 	statusBarShowCommand: boolean;
-	statusBarShowStopCommand: boolean;
 };
 
 export function activate(context: vscode.ExtensionContext) {
@@ -41,27 +40,20 @@ export function activate(context: vscode.ExtensionContext) {
 	commandStatusBarItem.text = '$(play)$(terminal) Run Command';
 	commandStatusBarItem.tooltip = 'Run the configured terminal command';
 
-	const stopCommandStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 98);
-	stopCommandStatusBarItem.command = 'project-runner.stopCommand';
-	stopCommandStatusBarItem.text = '$(debug-stop) Stop Project';
-	stopCommandStatusBarItem.tooltip = 'Stop the running Project Runner action';
-
-	updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
+	updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem);
 
 	const startRunning = createNativeDebugAction(
 		'workbench.action.debug.run',
 		runStatusBarItem,
 		debugStatusBarItem,
-		commandStatusBarItem,
-		stopCommandStatusBarItem
+		commandStatusBarItem
 	);
 
 	const startDebugging = createNativeDebugAction(
 		'workbench.action.debug.start',
 		runStatusBarItem,
 		debugStatusBarItem,
-		commandStatusBarItem,
-		stopCommandStatusBarItem
+		commandStatusBarItem
 	);
 
 	const runProject = vscode.commands.registerCommand('project-runner.runProject', startRunning);
@@ -87,7 +79,7 @@ export function activate(context: vscode.ExtensionContext) {
 		terminal.show();
 		terminal.sendText(command.command);
 		runningCommandTerminal = terminal;
-		updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
+		updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem);
 	});
 
 	const stopCommand = vscode.commands.registerCommand('project-runner.stopCommand', async () => {
@@ -109,7 +101,7 @@ export function activate(context: vscode.ExtensionContext) {
 			await vscode.commands.executeCommand('workbench.action.debug.stop');
 			nativeActionRunning = false;
 		}
-		updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
+		updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem);
 	});
 
 	const configureCommand = vscode.commands.registerCommand('project-runner.configureCommand', async () => {
@@ -180,7 +172,7 @@ export function activate(context: vscode.ExtensionContext) {
 			vscode.ConfigurationTarget.Workspace
 		);
 
-		updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
+		updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem);
 		vscode.window.showInformationMessage(`Universal Project Runner command saved: ${nextCommand.name}`);
 	});
 
@@ -193,20 +185,20 @@ export function activate(context: vscode.ExtensionContext) {
 
 		if (runningCommandTerminal === terminal) {
 			runningCommandTerminal = undefined;
-			updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
+			updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem);
 		}
 	});
 
 	const debugStart = vscode.debug.onDidStartDebugSession((session) => {
 		nativeActionRunning = true;
 		nativeDebugSessions.add(session);
-		updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
+		updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem);
 	});
 
 	const debugTerminate = vscode.debug.onDidTerminateDebugSession((session) => {
 		if (nativeDebugSessions.delete(session)) {
 			nativeActionRunning = nativeDebugSessions.size > 0;
-			updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
+			updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem);
 		}
 	});
 
@@ -217,10 +209,9 @@ export function activate(context: vscode.ExtensionContext) {
 			event.affectsConfiguration('universalProjectRunner.commands') ||
 			event.affectsConfiguration('universalProjectRunner.statusBar.showRun') ||
 			event.affectsConfiguration('universalProjectRunner.statusBar.showDebug') ||
-			event.affectsConfiguration('universalProjectRunner.statusBar.showCommand') ||
-			event.affectsConfiguration('universalProjectRunner.statusBar.showStopCommand')
+			event.affectsConfiguration('universalProjectRunner.statusBar.showCommand')
 		) {
-			updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
+			updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem);
 		}
 	});
 
@@ -236,8 +227,7 @@ export function activate(context: vscode.ExtensionContext) {
 		configChange,
 		runStatusBarItem,
 		debugStatusBarItem,
-		commandStatusBarItem,
-		stopCommandStatusBarItem
+		commandStatusBarItem
 	);
 }
 
@@ -274,8 +264,7 @@ function getRunnerConfig(workspaceFolder: vscode.WorkspaceFolder): RunnerConfig 
 		actionDebug: config.get('action.debug', true),
 		statusBarShowRun: config.get('statusBar.showRun', true),
 		statusBarShowDebug: config.get('statusBar.showDebug', false),
-		statusBarShowCommand: config.get('statusBar.showCommand', false),
-		statusBarShowStopCommand: config.get('statusBar.showStopCommand', true)
+		statusBarShowCommand: config.get('statusBar.showCommand', false)
 	};
 }
 
@@ -287,7 +276,6 @@ function getGlobalRunnerConfig(): Pick<
 	| 'statusBarShowRun'
 	| 'statusBarShowDebug'
 	| 'statusBarShowCommand'
-	| 'statusBarShowStopCommand'
 > {
 	const config = vscode.workspace.getConfiguration('universalProjectRunner');
 
@@ -297,8 +285,7 @@ function getGlobalRunnerConfig(): Pick<
 		commands: normalizeRunnerCommands(config.get('commands', [])),
 		statusBarShowRun: config.get('statusBar.showRun', true),
 		statusBarShowDebug: config.get('statusBar.showDebug', false),
-		statusBarShowCommand: config.get('statusBar.showCommand', false),
-		statusBarShowStopCommand: config.get('statusBar.showStopCommand', true)
+		statusBarShowCommand: config.get('statusBar.showCommand', false)
 	};
 }
 
@@ -339,18 +326,17 @@ function createNativeDebugAction(
 	command: string,
 	runStatusBarItem: vscode.StatusBarItem,
 	debugStatusBarItem: vscode.StatusBarItem,
-	commandStatusBarItem: vscode.StatusBarItem,
-	stopCommandStatusBarItem: vscode.StatusBarItem
+	commandStatusBarItem: vscode.StatusBarItem
 ): () => Promise<void> {
 	return async () => {
 		nativeActionRunning = true;
-		updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
+		updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem);
 
 		try {
 			await vscode.commands.executeCommand(command);
 		} catch (error) {
 			nativeActionRunning = false;
-			updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem, stopCommandStatusBarItem);
+			updateActionVisibility(runStatusBarItem, debugStatusBarItem, commandStatusBarItem);
 			throw error;
 		}
 	};
@@ -359,8 +345,7 @@ function createNativeDebugAction(
 function updateActionVisibility(
 	runStatusBarItem: vscode.StatusBarItem,
 	debugStatusBarItem: vscode.StatusBarItem,
-	commandStatusBarItem: vscode.StatusBarItem,
-	stopCommandStatusBarItem: vscode.StatusBarItem
+	commandStatusBarItem: vscode.StatusBarItem
 ): void {
 	const config = getGlobalRunnerConfig();
 	const hasCommandAction = config.commands.length > 0;
@@ -387,12 +372,6 @@ function updateActionVisibility(
 		commandStatusBarItem.show();
 	} else {
 		commandStatusBarItem.hide();
-	}
-
-	if (config.statusBarShowStopCommand && commandRunning) {
-		stopCommandStatusBarItem.show();
-	} else {
-		stopCommandStatusBarItem.hide();
 	}
 }
 

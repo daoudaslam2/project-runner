@@ -158,11 +158,6 @@
           "type": "boolean",
           "default": false,
           "description": "Show the Universal Project Runner custom command action in the status bar when commands are configured."
-        },
-        "universalProjectRunner.statusBar.showStopCommand": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show the Universal Project Runner stop action in the status bar while an action is running."
         }
       }
     }

@@ -46,7 +46,7 @@ Universal Project Runner adds two ways to run your project without opening the C
 
 | Location | Button |
 | --- | --- |
-| Bottom status bar | `Run Project`, `Debug Project`, `Run Command`, `Stop Project`, or any combination |
+| Bottom status bar | `Run Project`, `Debug Project`, `Run Command`, or any combination |
 | Editor title toolbar | Play icon, debug icon, command icon, or stop icon |
 
 The editor title toolbar button appears near the top-right editor actions. VS Code-compatible editors do not allow extensions to place arbitrary custom buttons directly in the main app title bar, so this is the closest native top-area location.
@@ -62,8 +62,7 @@ By default, Universal Project Runner shows the VS Code run and debug actions:
   "universalProjectRunner.commands": [],
   "universalProjectRunner.statusBar.showRun": true,
   "universalProjectRunner.statusBar.showDebug": false,
-  "universalProjectRunner.statusBar.showCommand": false,
-  "universalProjectRunner.statusBar.showStopCommand": true
+  "universalProjectRunner.statusBar.showCommand": false
 }
 ```
 
@@ -101,7 +100,6 @@ If you have multiple workspace folders open, Universal Project Runner uses the f
 | `universalProjectRunner.statusBar.showRun` | boolean | `true` | Shows the run action in the bottom status bar. |
 | `universalProjectRunner.statusBar.showDebug` | boolean | `false` | Shows the debug action in the bottom status bar. |
 | `universalProjectRunner.statusBar.showCommand` | boolean | `false` | Shows the custom command action in the bottom status bar when commands are configured. |
-| `universalProjectRunner.statusBar.showStopCommand` | boolean | `true` | Shows the stop action in the bottom status bar while a Universal Project Runner action is running. |
 
 ## Command Items
 
@@ -203,14 +201,6 @@ Add these to your workspace `.vscode/settings.json`, or use `Universal Project R
 ```json
 {
   "universalProjectRunner.action.run": false
-}
-```
-
-### Hide Stop Button in Status Bar
-
-```json
-{
-  "universalProjectRunner.statusBar.showStopCommand": false
 }
 ```
 

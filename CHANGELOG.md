@@ -10,6 +10,7 @@ All notable changes to Universal Project Runner are documented here.
 - Added per-command working directories.
 - Added command picking when multiple commands are configured.
 - Added a one-time warning when old `projectRunner.*` settings are detected.
+- Removed the bottom status bar stop button and related setting.
 
 ## 0.1.2
 
